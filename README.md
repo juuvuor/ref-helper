@@ -1,9 +1,11 @@
 # ref-helper
 Lähdeviitteiden hallintaohjelma, joka helpottaa kandidaatintutkielman kirjoittamista.
 
-[Product backlog](https://jyu-my.sharepoint.com/:x:/g/personal/osterava_jyu_fi/EWZjQ7GUXjBGiN0exdQ4L6EBh-DBpoIOX4FvMfPpZma3jQ?e=Xhj8SP)
+## [Product backlog](https://jyu-my.sharepoint.com/:x:/g/personal/osterava_jyu_fi/EWZjQ7GUXjBGiN0exdQ4L6EBh-DBpoIOX4FvMfPpZma3jQ?e=Xhj8SP)
 
-# Definition Of Done
+## Testikattavuus ja testit
+
+## Definition Of Done
 Sovellus toimii komentoriviliittymässä:
 * Kaikki tarpeelliset komennot ja toiminnot on toteutettu ja ne toimivat odotetulla tavalla.
 * Käyttöliittymä on intuitiivinen ja käyttäjäystävällinen.
@@ -15,3 +17,4 @@ Automatisoidut testit kattavat kaikki toiminnot:
 Koodi on laadukasta ja hyvin dokumentoitu:
 * Koodi noudattaa projektin ohjelmointikäytäntöjä ja -standardeja.
 * Koodi on selkeää, hyvin kommentoitua ja helposti ylläpidettävää.
+
