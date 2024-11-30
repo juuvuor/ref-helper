@@ -20,8 +20,8 @@ class Interpreter:
 
     def get_command(self, parts):
         """ Hakee ensimmäistä merkkijonoa vastaavan komennon. """
-        for c in self.commands:
+        for command in self.commands:
             # NOTE: Dict => class?
-            for a in c["alias"]:
-                if a == parts[0]:
-                    return c
+            for alias in command["alias"]:
+                if alias == parts[0]:
+                    return command
