@@ -1,8 +1,9 @@
 
 class Interpreter:
     """ Komentotulkki. """
-    def __init__(self, io, commands):
+    def __init__(self, io, data_manager, commands):
         self.io = io
+        self.data_manager = data_manager
         self.commands = commands
 
     def executeline(self):
@@ -15,7 +16,7 @@ class Interpreter:
             self.io.write("Tunnistamaton komento. help auttaa")
             return
         # NOTE: Dict => class?
-        command["execute"](self.io, parts)
+        command["execute"](self.io, self.data_manager, parts)
         return 0 # NOTE: Virheen tapahtuessa muuta kuin nolla
 
     def get_command(self, parts):

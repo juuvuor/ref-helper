@@ -8,6 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+pybtex = "^0.24.0"
+setuptools = "^75.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
