@@ -5,6 +5,13 @@ Lähdeviitteiden hallintaohjelma, joka helpottaa kandidaatintutkielman kirjoitta
 
 ## Testikattavuus ja testit
 
+## Asentaminen ja ajaminen
+```bash
+poetry install
+poetry shell
+python src/index.py
+```
+
 ## Definition Of Done
 Sovellus toimii komentoriviliittymässä:
 * Kaikki tarpeelliset komennot ja toiminnot on toteutettu ja ne toimivat odotetulla tavalla.
