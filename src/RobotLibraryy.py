@@ -1,4 +1,4 @@
-# Pohja kopioitu demojen osasta 3
+# Pohjaa kopioitu demojen osasta 3
 
 class RobotLibrary:
     """ Robot-testit käyttävät tämän luokan tarjoamia metodeja. """
