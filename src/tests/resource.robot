@@ -1,7 +1,7 @@
 *** Settings ***
-Library  ../robotlibrary.py
+Library  ../RobotLibrary.py
 
-*** Keywords ***
+#*** Keywords ***
 # Esimerkkejä
 #Input Login Command
 #    Input  login
@@ -11,3 +11,7 @@ Library  ../robotlibrary.py
 #    Input  ${username}
 #    Input  ${password}
 #    Run Application
+
+*** Test Cases ***
+Test Ci Pipeline
+    Instance Should Contain  testi
