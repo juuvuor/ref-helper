@@ -5,6 +5,8 @@ Lähdeviitteiden hallintaohjelma, joka helpottaa kandidaatintutkielman kirjoitta
 
 ## Testikattavuus ja testit
 
+![GHA workflow badge](https://github.com/juuvuor/ref-helper/workflows/Python_application/badge.svg)
+
 ## Asentaminen ja ajaminen
 ```bash
 poetry install
