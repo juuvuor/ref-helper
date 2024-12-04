@@ -1,4 +1,4 @@
-from pybtex.database import parse_file, BibliographyData, Entry
+from pybtex.database import BibliographyData, Entry
 from pybtex.database.input.bibtex import Parser
 from os.path import isfile
 
@@ -13,7 +13,6 @@ class BibtexManager:
     def get_data(self):
         """
         Palauttaa suoraan sisäisesti käytetyn datan, johon ulkoisesti tehdään muutoksia.
-        NOTE: voi tän toki muullakin tavalla hoitaa kuten tehä tähän luokkaan jokaisen tempun.
         """
         return self.data
     
@@ -25,29 +24,12 @@ class BibtexManager:
         """
         entry = Entry(entry_type, fields)
         self.data.entries[key] = entry
-        print(f"Lisätty lähde {key}, {entry_type}, {fields}")
-        
-    
+        self.write()
+
     def write(self):  
         """
         Kirjoittaa bib tiedostoon.
         TODO: backup
         """
         with open(self.file_path, "w") as bibfile:
-            self.data.to_file(bibfile)   
-            
-    def prompt_for_reference(self):
-        """
-        Kysyy käyttäjältä lähdeviitten tiedot ja lisää ne.
-        """
-        key = input("Anna lähdeviitten id: ")
-        entry_type = input("Anna lähdeviitten tyyppi: ")
-        fields = {}
-        while True:
-            field_name = input("Anna kentän nimi: ")
-            if not field_name:
-                break
-            field_value = input("Anna kentän arvo: ")
-            fields[field_name] = field_value
-        self.add_reference(key, entry_type, fields)
-        self.write()
+            self.data.to_file(bibfile)
