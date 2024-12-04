@@ -1,7 +1,7 @@
 from pybtex.database import parse_file, BibliographyData, Entry
 from pybtex.database.input.bibtex import Parser
 from os.path import isfile
-import atexit
+
 
 class BibtexManager:
     """ Hoitaa bibtex-tiedoston lukemisen ja kirjoittamisen. """
@@ -18,27 +18,30 @@ class BibtexManager:
         return self.data
     
     def add_reference(self, key, entry_type, fields):
-        """ Lisää uuden referenssin. 
-        :param key: referenssin id, voi olla numero tai merkkijono.
-        :param entry_type: referenssin tyyppi esim kirja, artikkeli
-        :param fields: referenssin sisältö
+        """ Lisää uuden lähdeviitteen. 
+        :param key: lähdeviitten id, voi olla numero tai merkkijono.
+        :param entry_type: lähdeviitteen tyyppi esim kirja, artikkeli
+        :param fields: lähdeviitteen sisältö
         """
         entry = Entry(entry_type, fields)
         self.data.entries[key] = entry
-        print(f"Lisätty referenssi {key}, {entry_type}, {fields}")
+        print(f"Lisätty lähde {key}, {entry_type}, {fields}")
         
     
     def write(self):  
         """
-        Kirjoittaa alkuperäisen tiedoston päälle. (tällä hetkellä kuitenkin kirjoittaa testitiedostoon)
+        Kirjoittaa bib tiedostoon.
         TODO: backup
         """
         with open(self.file_path, "w") as bibfile:
             self.data.to_file(bibfile)   
             
     def prompt_for_reference(self):
-        key = input("Anna referenssin id: ")
-        entry_type = input("Anna referenssin tyyppi: ")
+        """
+        Kysyy käyttäjältä lähdeviitten tiedot ja lisää ne.
+        """
+        key = input("Anna lähdeviitten id: ")
+        entry_type = input("Anna lähdeviitten tyyppi: ")
         fields = {}
         while True:
             field_name = input("Anna kentän nimi: ")
