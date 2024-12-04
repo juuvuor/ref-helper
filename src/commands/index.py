@@ -1,8 +1,4 @@
 import commands.list
-from bibtex_manager import BibtexManager
-
-bibtex_file_path = "./test.bib"
-data_manager = BibtexManager(bibtex_file_path)
 
 commands = [
     { "alias": commands.list.alias, "execute": commands.list.execute },
@@ -19,4 +15,3 @@ commands = [
         "execute": lambda io, data_manager, args : data_manager.prompt_for_reference()
     }
 ]
-
