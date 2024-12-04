@@ -20,21 +20,3 @@ commands = [
     }
 ]
 
-def main():
-    import sys
-    io = sys.stdout
-    args = sys.argv[1:]
-    if not args:
-        io.write("Usage: <command> [args]\n")
-        return
-    
-    command_name = args[0]
-    for command in commands:
-        if command_name in command["alias"]:
-            command["execute"](io, data_manager, args[1:])
-            break
-    else:
-        io.write(f"Unknown command: {command_name}\n")
-        
-if __name__ == "__main__":
-    main()
