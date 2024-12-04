@@ -22,6 +22,7 @@ class BibtexManager:
         :param entry_type: lähdeviitteen tyyppi esim kirja, artikkeli
         :param fields: lähdeviitteen sisältö
         """
+        # BUG: Samalla suorituskerralla tämän jälkeen list-komento kaataa ohjelman.
         entry = Entry(entry_type, fields)
         self.data.entries[key] = entry
         self.write()
