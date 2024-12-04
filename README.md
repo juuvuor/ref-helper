@@ -11,7 +11,10 @@ poetry install
 poetry shell
 python src/index.py
 ```
-
+## Komennot ja käyttö
+"add" Tämän jälkeen pystyy lisäämään referenssei
+Sitten ku haluamat tiedot on laitettu nii kaks kertaa entteriä nii referenssi kirjottuu tiedostoo.
+"exit" tallentaa ja sulkee ohjelman.
 ## Definition Of Done
 Sovellus toimii komentoriviliittymässä:
 * Kaikki tarpeelliset komennot ja toiminnot on toteutettu ja ne toimivat odotetulla tavalla.
