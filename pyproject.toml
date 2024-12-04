@@ -2,8 +2,7 @@
 name = "ref-helper"
 version = "0.0.1"
 description = "Lähdeviitteiden hallintaohjelma, joka helpottaa kandidaatintutkielman kirjoittamista."
-# Sori juuso, en tiiä sun sukunimee :)) - Joni
-authors = ["Niko Iljin", "Remi Lehtinen", "Olli Terävä", "Veeti Eloranta", "Juuso V_", "Joni Rapo"]
+authors = ["Niko Iljin", "Remi Lehtinen", "Olli Terävä", "Veeti Eloranta", "Juuso Vuorela", "Joni Rapo"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
