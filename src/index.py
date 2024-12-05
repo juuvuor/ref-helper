@@ -9,7 +9,7 @@ from app import App
 signal.signal(signal.SIGINT, lambda sig, frame : exit(0))
 
 # TODO: Keksi parempi tiedostonimi
-bibtex_file_path = "../test.bib"
+bibtex_file_path = "./test.bib"
 data_manager = BibtexManager(bibtex_file_path)
 console_io = ConsoleIO()
 
