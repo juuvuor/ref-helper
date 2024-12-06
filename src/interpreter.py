@@ -35,9 +35,10 @@ class Interpreter:
     def to_args(self, str: str):
         """
         Jakaa merkkijonon osiin huomioiden lainausmerkit.
+        NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
         src: https://stackoverflow.com/questions/554013/regular-expression-to-split-on-spaces-unless-in-quotes
         """
-        return re.findall('\\w+|"[\\w\\s]*"', str)
+        return re.findall(r'\w+|"[\w\s]*"', str)
 
     def get_command(self, parts):
         """ Hakee ensimmäistä merkkijonoa vastaavan komennon. """
