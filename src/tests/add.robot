@@ -1,30 +1,36 @@
 *** Settings ***
-Library     ../RobotLibrary.py
 Resource    resource.robot
 
 
 *** Test Cases ***
 Test Input Add One
-    Input reference    testi    testi    testi    testi
+    Input    add
+    Input reference    testi    testi
+    Input field    testi    testi
     Input    ${EMPTY}
     Input    exit
     Run Application
     Output Should Contain    Lisätty lähde testi, testi, {'testi': 'testi'}.
 
 Test Input Add Existing
-    Input reference    testi    testi    testi    testi
+    Input    add
+    Input reference    testi    testi
+    Input field    testi    testi
     Input    ${EMPTY}
-    Input reference    testi    testi    testi    testi
+    Input    add
+    Input reference    testi    testi
+    Input field    testi    testi
     Input    ${EMPTY}
     Input    exit
     Run Application
     Output Should Contain    Lähdeavain "testi" on jo olemassa!
 
 Test Input Add Many Fields
-    Input    Add
-    Input    id
-    Input    name
-    Input type    kentan koko    suuri
-    Input type    kentta    Jalkapallokentta
+    Input    add
+    Input reference    id    type
+    Input field    kentan koko    suuri
+    Input field    kentta    Jalkapallokentta
+    Input    ${EMPTY}
+    Input    exit
     Run Application
-    Output Should Contain    Lisätty lähde id, name, kentan koko, suuri, kentta, Jalkapallokentta
+    Output Should Contain    Lisätty lähde id, type, {'kentan koko': 'suuri', 'kentta': 'Jalkapallokentta'}.

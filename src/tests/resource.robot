@@ -4,14 +4,11 @@ Library     ../RobotLibrary.py
 
 *** Keywords ***
 Input reference
-    [Arguments]    ${id}    ${name}    ${type}    ${value}
-    Input    add
+    [Arguments]    ${id}    ${type}
     Input    ${id}
-    Input    ${name}
     Input    ${type}
-    Input    ${value}
 
-Input type
-    [Arguments]    ${type}    ${value}
-    Input    ${type}
+Input field
+    [Arguments]    ${field}    ${value}
+    Input    ${field}
     Input    ${value}
