@@ -6,22 +6,36 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
     """
     Listaa referenssit.
 
-    args avainsanat: filter, sort
+     # TODO: Olisi hyvä, jos tän sais yleistettyä interpreteriin, niin muutkin komennot hyötyis mahdollisesti tämän tapasesta määrittelystä
+     # Samalla Help voidaan koostaa sen avulla ja help voidaan kohdistaa tiettyyn komentoon.
+     # Ehkä vähän over-engineered..
 
+    # avainsanojen järjestyksellä ei väliä
+    [VALINNAINEN]
+    <VAADITTU>
+
+    Avainsana filter:
+        <entry_type>
+        <fieldname> [contains|regex] <value>  # contains defaulttina
+
+    Avainsana sort:
+        <fieldname> [numeric] [asc|desc]  # asc defaulttina
+
+    Esimerkkejä:
     Voi valita näytettäväksi tietyn tyyppiset entryt kuten book:
-    > list filter book article  # joko pilkulla erotetut tai sitten vai peräkkäin olevat
+    > list filter book article
+    > list filter author "Aku Ankka"
+    > list filter author contains "Aku Ankka"
+    > list filter author regex .*Ankka
 
-    > list filter author SÄÄNTÖ  # joko ihan merkkijonolla tai säännollisellä lausekkeella. Tän voi toki laittaa eri avainsanan alle.
+    > list sort author year numeric desc
+    > list sort author asc year numeric desc
 
-    # Sort: esimerkissä author aakkosjärjestykseen (sukunimi ensin?) ja year numeerinen (pitää tietää, mitkä fieldit kuuluu sisältää numeerista dataa)
-    # identtiset
-    > list sort author year desc  
-    > list sort author asc year desc
-
-    # ketjutettavat esim:
+    # Voidaan ketjuttaa esim:
     > list filter book author "Aku Ankka" sort year asc
+    > list sort year asc filter author contains "Aku Ankka" title titteli book inproceedings
     """
     data = data_manager.get_data()
-    print(args)
+    # print(args)
     for entry in data.entries:
         io.write(data.entries[entry].to_string("bibtex"))
