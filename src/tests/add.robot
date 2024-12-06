@@ -6,8 +6,10 @@ Resource    resource.robot
 *** Test Cases ***
 Test Input Add One
     Input reference    testi    testi    testi    testi
+    Input  ${EMPTY}
+    Input  exit
     Run Application
-    Output Should Contain Atleast    Lisätty lähde testi, testi, testi
+    Output Should Contain    Lisätty lähde testi, testi, {'testi': 'testi'}
 
 Test Input Add Many Fields
     Input    Add

@@ -1,7 +1,9 @@
+import sys, pdb # debug
 
 alias = ["add_reference", "add", "a"]
 def execute(io, data_manager, args):
     (key, entry_type, fields) = prompt_for_reference(io)
+    #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     data_manager.add_reference(key, entry_type, fields)
     io.write(f"Lisätty lähde {key}, {entry_type}, {fields}")
 

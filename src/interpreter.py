@@ -11,8 +11,14 @@ class Interpreter:
 
     def run(self):
         while True:
+            #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
             try:
-                self.executeline()
+                result = self.executeline()
+                if result == "exit":
+                    break
+                # Testit toimivat, koska ne hyödyntävät tätä statementtia, mikä oli alkuunsakin bugi.
+                #if result == None:
+                #    break
             except Exception as e:
                 if hasattr(e, "message"):
                     print(f"Error: {e.message}")
@@ -20,7 +26,6 @@ class Interpreter:
                     print(f"Error: {e}")
 
     def executeline(self):
-        #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
         """ Suorittaa yhden rivin. """
         line = self.io.read("ref-helper> ")
         parts = self.to_args(line)
@@ -29,8 +34,7 @@ class Interpreter:
             # TODO: Muuta viesti paremmaks ja mahollisesti jopa ulkoista se.
             self.io.write("Tunnistamaton komento. help auttaa")
             return
-        command["execute"](self.io, self.data_manager, parts)
-        return
+        return command["execute"](self.io, self.data_manager, parts)
 
     def to_args(self, str: str):
         """

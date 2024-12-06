@@ -10,6 +10,6 @@ commands = [
     },
     {
         "alias": ["exit", "q"],
-        "execute": lambda io, data_manager, args : exit(0)
+        "execute": lambda io, data_manager, args : "exit"
     }
 ]

@@ -2,6 +2,7 @@ from interpreter import Interpreter
 from bibtex_manager import BibtexManager
 from commands.index import commands
 from stub_io import StubIO
+import sys, pdb # debug
 
 
 class RobotLibrary:
@@ -29,17 +30,18 @@ class RobotLibrary:
             )
 
     def output_should_contain(self, value):
-        outputs = self.io.outputs
-        if value not in outputs and len(outputs) != 1:
+        """ Outputin pitäisi sisältää merkkijono missä tahansa kohdassa. """
+        total = "".join(self.io.outputs)
+        if not value in total:
             raise AssertionError(
                 f"Output \"{value}\" is not in {self.io.outputs}"
             )
 
     def output_should_contain_atleast(self,value):
         outputs = self.io.outputs
+        #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
         if len(outputs) <= 1:
             raise AssertionError(
                 f"Output \"{value}\" is not in {self.io.outputs}"
             )
-        
 
