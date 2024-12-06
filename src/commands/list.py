@@ -47,7 +47,7 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
         io.write(data.entries[entry].to_string("bibtex"))
     
     arr = dict_to_list(data.entries)
-    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author"}])
+    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
     print(result)
 
 
@@ -60,6 +60,11 @@ def sort_by_rules(arr: list, rules: list[dict]):
     """
     print(rules) # debug
     def key_func(entry):
+        """
+        Python sorttaa arrayt alkioiden mukaan järjestyksessä.
+        Eli vertailee automaattisesti ensimmäisiä ja toisia jne..
+        Tai ainakin se tekee näin tuplejen kanssa..
+        """
         result = [] # esimerkki ['1991', 'Luukkainen, Matti;Paksula, Matti;Vihavainen, Arto']
         for i in range(len(rules)):
             #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
@@ -68,20 +73,32 @@ def sort_by_rules(arr: list, rules: list[dict]):
             if field == "author": # voi olla muitakin poikkeuksia
                 value = entry.persons["author"] # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
                 value = list(map(lambda person : str(person), value)) # Muutetaan Person => str sukunimi ensin
-                value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
+                #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
                 value = ";".join(value) # Saadaan yhteen merkkijonoon.
             else:
                 value = entry.fields[field]
+            value = value.lower()
+
             if rule.get("numeric"):
                 try:
                     value = float(value)
                 except Exception as e:
                     pass
-            result.append(value) # NOTE: reversehomma * (-1 if rule.get("reverse") else 1) # miten ihmeessä tällä saa akkosjärjestyksen käännettyä??
+
+            if rule.get("reverse"):
+                if rule.get("numeric"):
+                    value *= -1
+                else:
+                    # Ilmeisesti käänteinen string sorttautuu kans käänteisesti?
+                    # src: https://www.geeksforgeeks.org/python-sort-on-basis-of-reverse-strings/?ref=ml_lbp
+                    value = value[::-1]
+            result.append(value)
+
         # debug printit
         print("key_func: " + entry.key)
         print(result)
         return result
+
     arr.sort(key = key_func)
     return arr
 
