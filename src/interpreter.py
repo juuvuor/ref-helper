@@ -28,7 +28,7 @@ class Interpreter:
     def executeline(self):
         """ Suorittaa yhden rivin. """
         line = self.io.read("ref-helper> ")
-        parts = self.to_args(line)
+        parts = Interpreter.to_args(line)
         command = self.get_command(parts)
         if command == None:
             # TODO: Muuta viesti paremmaks ja mahollisesti jopa ulkoista se.
@@ -36,7 +36,8 @@ class Interpreter:
             return
         return command["execute"](self.io, self.data_manager, parts)
 
-    def to_args(self, str: str):
+    @staticmethod
+    def to_args(str: str):
         """
         Jakaa merkkijonon osiin huomioiden lainausmerkit.
         NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
