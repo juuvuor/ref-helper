@@ -1,3 +1,6 @@
+import re
+import sys, pdb # debug
+
 
 class Interpreter:
     """ Komentotulkki. """
@@ -6,23 +9,44 @@ class Interpreter:
         self.data_manager = data_manager
         self.commands = commands
 
+    def run(self):
+        while True:
+            #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
+            try:
+                result = self.executeline()
+                if result == "exit":
+                    break
+                # Testit toimivat, koska ne hyödyntävät tätä statementtia, mikä oli alkuunsakin bugi.
+                #if result == None:
+                #    break
+            except Exception as e:
+                if hasattr(e, "message"):
+                    print(f"Error: {e.message}")
+                else:
+                    print(f"Error: {e}")
+
     def executeline(self):
         """ Suorittaa yhden rivin. """
         line = self.io.read("ref-helper> ")
-        parts = line.split(" ")
+        parts = self.to_args(line)
         command = self.get_command(parts)
         if command == None:
             # TODO: Muuta viesti paremmaks ja mahollisesti jopa ulkoista se.
             self.io.write("Tunnistamaton komento. help auttaa")
             return
-        # NOTE: Dict => class?
-        command["execute"](self.io, self.data_manager, parts)
-        return 0 # NOTE: Virheen tapahtuessa muuta kuin nolla
+        return command["execute"](self.io, self.data_manager, parts)
+
+    def to_args(self, str: str):
+        """
+        Jakaa merkkijonon osiin huomioiden lainausmerkit.
+        NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
+        src: https://stackoverflow.com/questions/554013/regular-expression-to-split-on-spaces-unless-in-quotes
+        """
+        return re.findall(r'\w+|"[\w\s]*"', str)
 
     def get_command(self, parts):
         """ Hakee ensimmäistä merkkijonoa vastaavan komennon. """
         for command in self.commands:
-            # NOTE: Dict => class?
             for alias in command["alias"]:
                 if alias == parts[0]:
                     return command
