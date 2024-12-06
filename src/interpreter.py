@@ -1,4 +1,5 @@
 import re
+import sys, pdb # debug
 
 
 class Interpreter:
@@ -8,19 +9,29 @@ class Interpreter:
         self.data_manager = data_manager
         self.commands = commands
 
+    def run(self):
+        while True:
+            try:
+                self.executeline()
+            except Exception as e:
+                if hasattr(e, "message"):
+                    print(f"Error: {e.message}")
+                else:
+                    print(f"Error: {e}")
+
     def executeline(self):
+        #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
         """ Suorittaa yhden rivin. """
         line = self.io.read("ref-helper> ")
-        args = self.to_args(line)
-        command = self.get_command(args)
+        parts = self.to_args(line)
+        command = self.get_command(parts)
         if command == None:
             # TODO: Muuta viesti paremmaks ja mahollisesti jopa ulkoista se.
             self.io.write("Tunnistamaton komento. help auttaa")
-            return 0
-        command["execute"](self.io, self.data_manager, args)
-        return 0 # NOTE: Virheen tapahtuessa muuta kuin nolla
-        # Käytännössähän tämä on turha, koska virhe catchataan metodin ulkopuolella ja sitä kautta saadaan detailed error message printattua
-    
+            return
+        command["execute"](self.io, self.data_manager, parts)
+        return
+
     def to_args(self, str: str):
         """
         Jakaa merkkijonon osiin huomioiden lainausmerkit.
@@ -28,9 +39,9 @@ class Interpreter:
         """
         return re.findall('\\w+|"[\\w\\s]*"', str)
 
-    def get_command(self, args):
+    def get_command(self, parts):
         """ Hakee ensimmäistä merkkijonoa vastaavan komennon. """
         for command in self.commands:
             for alias in command["alias"]:
-                if alias == args[0]:
+                if alias == parts[0]:
                     return command
