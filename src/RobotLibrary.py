@@ -6,7 +6,10 @@ import sys, pdb # debug
 
 
 class RobotLibrary:
-    """ Robot-testit käyttävät tämän luokan tarjoamia metodeja. """
+    """
+    Robot-testit käyttävät tämän luokan tarjoamia metodeja.
+    TODO: BibtexManagerStub
+    """
     def __init__(self):
         self.test = "testi"
         self.io = StubIO()

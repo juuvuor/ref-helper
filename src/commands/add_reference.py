@@ -4,8 +4,12 @@ alias = ["add_reference", "add", "a"]
 def execute(io, data_manager, args):
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
-    data_manager.add_reference(key, entry_type, fields)
-    io.write(f"Lisätty lähde {key}, {entry_type}, {fields}")
+    try:
+        data_manager.add_reference(key, entry_type, fields)
+        io.write(f"Lisätty lähde {key}, {entry_type}, {fields}.")
+    except Exception as e:
+        io.write(f'Lähdeavain "{key}" on jo olemassa!')
+    
 
 def prompt_for_reference(io):
     """
