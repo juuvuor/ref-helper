@@ -70,7 +70,9 @@ def sort_by_rules(arr: list, rules: list[dict]):
             #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
             rule = rules[i]
             field = rule.get("field")
-            value = resolve_field_value(entry, field).lower()
+            # avain pienistä aakkosista ja trimmataan whitespacet alusta ja lopusta
+            # Voi olla vöhän jännä jos henkilöiden nimissä on paljon whitespacea, koska niitä ei trimmata tällöin.
+            value = resolve_entry_field_value(entry, field).lower().strip()
 
             if rule.get("numeric"):
                 try:
@@ -96,18 +98,20 @@ def sort_by_rules(arr: list, rules: list[dict]):
     return arr
 
 
-def resolve_field_value(entry: Entry, field: str):
+def resolve_entry_field_value(entry: Entry, field: str, persons_to_str = True):
+    """
+    Hakee entrystä halutun fieldin arvon. Fieldin puuttuessa palautetaan tyhjä merkkijono "".
+    :param persons_to_str: persons on defaultisti lista Person-olioista.
+    """
     if field == "author": # voi olla muitakin poikkeuksia
         value = entry.persons.get("author") # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
-        if value != None:
+        if value != None and persons_to_str:
             value = list(map(lambda person : str(person), value)) # Muutetaan Person => str sukunimi ensin
             #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
             value = ";".join(value) # Saadaan yhteen merkkijonoon.
     else:
         value = entry.fields.get(field)
-    if value == None:
-            return ""
-    return value
+    return "" if value == None else value
 
 
 def dict_to_list(dict: OrderedCaseInsensitiveDict):
