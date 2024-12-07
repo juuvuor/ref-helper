@@ -1,7 +1,7 @@
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
-from pybtex.database import OrderedCaseInsensitiveDict
-import sys, pdb
+from pybtex.database import OrderedCaseInsensitiveDict, Entry
+#import sys, pdb
 
 alias = ["list", "l"]
 def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
@@ -42,24 +42,24 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
     # voi myös lisätä vaikka avainsanan key-only, jolloin tulostetaan vain key
     """
     data = data_manager.get_data()
-    # print(args)
-    for entry in data.entries:
-        io.write(data.entries[entry].to_string("bibtex"))
-    
     arr = dict_to_list(data.entries)
-    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
-    print(result)
+    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}]) # Esimerkki rulet TODO: niiden parseeminen argumenteista.
+    for entry in result:
+        io.write(entry.to_string("bibtex"))
 
 
 def sort_by_rules(arr: list, rules: list[dict]):
     """
     Järjestää annetun listan annettujen sääntöjen mukaan.
-    :arr list: Järjestettävä lista
-    :param rules: Muotoa [{"field": "FIELDNAME", "numeric": True, "reverse": False}]
-    Huom: Entry-objektissa author ei mene fields-attribuuttiin vaa persons, mikä on luokkaa OrderedCaseInsensitiveDict.
+    Jos field puuttuu entrystä, niin se vain korvataan tyhjällä merkkijonolla "".
+    Jos rule on merkattu numeric, niin se koittaa muuttaa floatiksi ja jos ei onnistu, niin arvoksi asetetaan nolla.
+    # NOTE: Arvoksi vois tällöin asettaa vaikka pienimmän tai suurimman mahdollisen luvun nii ne saadaan listauksen alkuun tai perälle.
+    :param arr: Järjestettävä lista
+    :param rules: Muotoa [{"field": str, "numeric": bool, "reverse": bool}]
+    Huom: Entry-objektissa author ei mene fields-attribuuttiin vaan persons-attribuuttiin, mikä on luokkaa OrderedCaseInsensitiveDict.
     """
-    print(rules) # debug
-    def key_func(entry):
+    #print(rules) # debug
+    def key_func(entry: Entry):
         """
         Python sorttaa arrayt alkioiden mukaan järjestyksessä.
         Eli vertailee automaattisesti ensimmäisiä ja toisia jne..
@@ -70,20 +70,13 @@ def sort_by_rules(arr: list, rules: list[dict]):
             #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
             rule = rules[i]
             field = rule.get("field")
-            if field == "author": # voi olla muitakin poikkeuksia
-                value = entry.persons["author"] # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
-                value = list(map(lambda person : str(person), value)) # Muutetaan Person => str sukunimi ensin
-                #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
-                value = ";".join(value) # Saadaan yhteen merkkijonoon.
-            else:
-                value = entry.fields[field]
-            value = value.lower()
+            value = resolve_field_value(entry, field).lower()
 
             if rule.get("numeric"):
                 try:
                     value = float(value)
-                except Exception as e:
-                    pass
+                except Exception:
+                    value = 0
 
             if rule.get("reverse"):
                 if rule.get("numeric"):
@@ -95,12 +88,26 @@ def sort_by_rules(arr: list, rules: list[dict]):
             result.append(value)
 
         # debug printit
-        print("key_func: " + entry.key)
-        print(result)
+        #print("key_func: " + entry.key)
+        #print(result)
         return result
 
     arr.sort(key = key_func)
     return arr
+
+
+def resolve_field_value(entry: Entry, field: str):
+    if field == "author": # voi olla muitakin poikkeuksia
+        value = entry.persons.get("author") # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
+        if value != None:
+            value = list(map(lambda person : str(person), value)) # Muutetaan Person => str sukunimi ensin
+            #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
+            value = ";".join(value) # Saadaan yhteen merkkijonoon.
+    else:
+        value = entry.fields.get(field)
+    if value == None:
+            return ""
+    return value
 
 
 def dict_to_list(dict: OrderedCaseInsensitiveDict):
