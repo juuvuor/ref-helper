@@ -3,7 +3,11 @@ import sys, pdb # debug
 
 
 class Interpreter:
-    """ Komentotulkki. """
+    """
+    Komentotulkki.
+    NOTE: On olemassa moduuli nimeltä argparse  https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args
+    Sillä saa suoraan parsettua argumentit ja komennot voi hyödyntää sen tarjoamaa rajapintaa.
+    """
     def __init__(self, io, data_manager, commands):
         self.io = io
         self.data_manager = data_manager
