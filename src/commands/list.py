@@ -4,17 +4,18 @@ from pybtex.database import OrderedCaseInsensitiveDict, Entry
 import argparse
 #import sys, pdb
 
+
 aliases = ["list", "l"]
 
 def add_to_subparsers(parser, subparsers):
     parser_list = subparsers.add_parser("list", aliases=aliases, add_help=False, help="list references")
-    parser_list.add_argument("-t", "--type", nargs="*", default=[], action="extend",
+    parser_list.add_argument("-t", "--type", nargs="*", default=[], action="append",
                             metavar="<entry_type>",
                             help="""<entry_type> like "book" or "article\"""")
-    parser_list.add_argument("-f", "--field", nargs="*", default=[], action="extend",
+    parser_list.add_argument("-f", "--field", nargs="*", default=[], action="append",
                             metavar="<field_name> <value>",
                             help="""<field_name> accompanied by its <value> like 'author "Aku Ankka"'""")
-    parser_list.add_argument("-s", "--sort", nargs="*", default=[], action="extend",
+    parser_list.add_argument("-s", "--sort", nargs="*", default=[], action="append",
                             metavar="<field_name> [numeric] [desc]",
                             help="""<field_name> with two optional modifiers [numeric] [desc] (to make the order descending) like 'year numeric desc' to sort by year treated as a number in descending order or "title" to sort by title in ascending order""")
 
@@ -22,42 +23,20 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     """
     Listaa referenssit.
 
-    # TODO: Olisi hyvä, jos tän sais yleistettyä interpreteriin, niin muutkin komennot hyötyis mahdollisesti tämän tapasesta määrittelystä
-    # Samalla Help voidaan koostaa sen avulla ja help voidaan kohdistaa tiettyyn komentoon.
-    # Ehkä vähän over-engineered..
+    # Esimerkki inputit interpreteriin, mitkä muuttuvat argparse.Namespace muotoon add_to_subparsers määrittelemällä tavalla.
+    ["list", "-t", "book", "article"]
+    ["list", "--type", "book", "article"]
+    ["list", "--field", "title", "Akun kirja", "author", "Aku Ankka"]
+    ["list", "--sort", "year"]
+    ["list", "--sort", "year", "desc"]
+    ["list", "-t" "book", "-f", "author", "Aku Ankka", "-s", "year", "reverse"]
+    ["list", "-t" "book", "-f", "author", "Aku Ankka", "-s", "year", "numeric", "reverse"]
 
-    # avainsanojen järjestyksellä ei väliä
-    [VALINNAINEN]
-    <VAADITTU>
-
-    Avainsana filter:
-        <entry_type>
-        <fieldname> [contains|regex] <value>  # contains defaulttina
-
-    Avainsana sort:
-        <fieldname> [numeric] [asc|desc]  # asc defaulttina
-
-    Esimerkkejä:
-    Voi valita näytettäväksi tietyn tyyppiset entryt kuten book:
-    > list filter book article
-    > list filter author "Aku Ankka"
-    > list filter author contains "Aku Ankka"
-    > list filter author regex .*Ankka
-
-    > list sort author year numeric desc
-    > list sort author asc year numeric desc
-
-    # Voidaan ketjuttaa esim:
-    > list filter book author "Aku Ankka" sort year asc
-    > list sort year asc filter author contains "Aku Ankka" title titteli book inproceedings
-
-    # Mietintää:
-    # > list AVAIN  # voisi listata vain kyseisen entryn
-    # voi myös lisätä vaikka avainsanan key-only, jolloin tulostetaan vain key
-
-    :param ns: Mallia: Namespace(command_name='list', type=['book'], field=['author', 'Aku Ankka'], sort=['year', 'numeric', 'reverse'])
-    ns.type
+    :param ns: Mallia: Namespace(command_name='list', type=[], field=[['author', 'Aku'], ['author', 'Roope']], sort=[])
     """
+
+    print("DEBUG: list namespace: " + str(ns)) # debug
+
     data = data_manager.get_data()
     arr = dict_to_list(data.entries)
 

@@ -14,7 +14,12 @@ class CustomArgumentParser(argparse.ArgumentParser):
 
 
 class Interpreter:
-    """ Komentotulkki. """
+    """
+    Komentotulkki.
+    Tulostusten pitäisi tulla annettuun io-luokkaan, mutta voi olla,
+    että argparse jossain edge-tapauksessa printtaa stdout tai stderr..
+    bug reporttia, niin korjataan.
+    """
     def __init__(self, io, data_manager):
         self.io = io
         self.data_manager = data_manager
@@ -70,4 +75,5 @@ class Interpreter:
         NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
         src: https://stackoverflow.com/questions/554013/regular-expression-to-split-on-spaces-unless-in-quotes
         """
-        return re.findall(r'\w+|"[\w\s]*"', str)
+        return str.split(" ")
+        #return re.findall(r'\w+|"[\w\s]*"', str) # jättää viivat ulkopuolelle, mitkä vaaditaan argumentteihin

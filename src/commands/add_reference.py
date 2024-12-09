@@ -1,6 +1,7 @@
-import sys, pdb # debug
+#import sys, pdb # debug
 
-aliases = ["add_reference", "add", "a"]
+
+aliases = ["add", "a"]
 
 def add_to_subparsers(parser, subparsers):
     parser_add = subparsers.add_parser("add", aliases=aliases, add_help=False, help="add a reference")

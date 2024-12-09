@@ -2,6 +2,22 @@ import commands.list as c_list
 import commands.add_reference as c_add_reference
 
 
+"""
+Komento-tiedoston tynkäesimerkki:
+
+aliases = ["esim"]
+
+def add_to_subparsers(parser, subparsers):
+    parser_esim = subparsers.add_parser("esim", aliases=aliases, add_help=False, help="mitä tää tekee")
+    # + muut määrittelyt argumentteihin. Esimerkki list-komento
+    # https://docs.python.org/3/library/argparse.html
+
+def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
+    pass
+    return # Joko ei mitään tai "exit", jolloin interpreter breikkaa while loopista ja ohjelma sulkeutuu.
+"""
+
+
 # NOTE: Tänne lisätään komennot, mitkä sitten alustetaan funktiolla init_commands.
 command_modules = [
     c_list,
