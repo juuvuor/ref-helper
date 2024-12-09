@@ -70,10 +70,9 @@ class Interpreter:
 
     @staticmethod
     def str_to_args(str: str):
-        """
-        Jakaa merkkijonon osiin huomioiden lainausmerkit.
-        NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
-        src: https://stackoverflow.com/questions/554013/regular-expression-to-split-on-spaces-unless-in-quotes
-        """
-        return str.split(" ")
-        #return re.findall(r'\w+|"[\w\s]*"', str) # jättää viivat ulkopuolelle, mitkä vaaditaan argumentteihin
+        """ Jakaa merkkijonon osiin huomioiden lainausmerkit. """
+        # Säännöllinen lauseke matchaa kaiken non-whitespacen ja huomioi lainausmerkit.
+        result = re.findall(r'".*"|\S+', str)
+        # Säännöllinen lauseke jättää lainausmerkit ja tämä poistaa ne.
+        result = list(map(lambda arg : arg[1:-1] if arg[0] == '"' and arg[-1] == '"' else arg, result))
+        return result
