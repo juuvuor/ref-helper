@@ -15,7 +15,7 @@ Test Input Should Not Exist
     Input    testi
     Input    exit
     Run Application
-    Output Should Contain    Tunnistamaton komento. help auttaa
+    Output Should Contain    Unrecognized command.
 
 Test Instance Should Contain
     [Documentation]    This is a dummy test
