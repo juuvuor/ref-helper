@@ -2,26 +2,33 @@ import commands.list as c_list
 import commands.add_reference as c_add_reference
 
 
-command_modules = [c_list, c_add_reference]
-commands = {} # Populoituu kun callataan init_commands
+# NOTE: Tänne lisätään komennot, mitkä sitten alustetaan funktiolla init_commands.
+command_modules = [
+    c_list,
+    c_add_reference
+]
 
 
 def init_commands(parser, subparsers):
     """ Alustaa komennot ja palauttaa ne sanakirjassa. """
+    commands = {}
     for command_module in command_modules:
-        add_command(parser, subparsers, command_module)
-    init_default_commands(parser, subparsers)
+        add_command(commands, parser, subparsers, command_module)
+    init_default_commands(commands, parser, subparsers)
     return commands
 
 
-def add_command(parser, subparsers, command_module):
+def add_command(commands, parser, subparsers, command_module):
     command_module.add_to_subparsers(parser, subparsers)
     for alias in command_module.aliases:
         commands.update({alias: command_module.execute})
 
 
-def init_default_commands(parser, subparsers):
-    """ TODO: Paloittele """
+def init_default_commands(commands, parser, subparsers):
+    """
+    Hoitaa erikoisten komentojen kuten help ja exit alustamisen.
+    TODO: Paloittele
+    """
     parser_help = subparsers.add_parser("help", aliases=["help", "h"], add_help=False, help="usage: help [command]")
     parser_help.add_argument("command", nargs="*", default=[], action="extend")
 
@@ -41,6 +48,7 @@ def init_default_commands(parser, subparsers):
         commands.update({alias: help_command})
 
     parser_exit = subparsers.add_parser("exit", aliases=["exit", "q"], add_help=False, help="")
+    parser_exit.add_argument("command", nargs="*", default=[], action="extend")
     for alias in ["exit", "q"]:
         commands.update({alias: lambda io, data_manager, ns : "exit"})
 
