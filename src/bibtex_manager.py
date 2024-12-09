@@ -4,7 +4,11 @@ from os.path import isfile
 
 
 class BibtexManager:
-    """ Hoitaa bibtex-tiedoston lukemisen ja kirjoittamisen. """
+    """
+    Hoitaa bibtex-tiedoston lukemisen ja kirjoittamisen.
+    NOTE: BibliographyData ylläpitää myös jotain crossref hommaa
+    ja wanted_entries dictiä, voivat aiheuttaa bugeja erikoisemmilla referensseillä.
+    """
     def __init__(self, file_path):
         self.file_path = file_path
         # Data muotoa: BibliographyData  https://docs.pybtex.org/api/parsing.html#pybtex.database.BibliographyData
@@ -33,9 +37,16 @@ class BibtexManager:
         :param fields: lähdeviitteen sisältö
         """
         entry = Entry(entry_type, fields)
-        self.data.entries[key] = entry
+        self.data.entries.pop(key)
+        self.data.add_entry(key, entry)
         self.write()
 
+    def delete_reference(self, key):
+        """ Poistaa avainta vastaan lähdeviitteen.
+        :param key: lähdeviitten id, voi olla numero tai merkkijono.
+        """
+        self.data.entries.pop(key)
+        self.write()
 
     def write(self):  
         """
