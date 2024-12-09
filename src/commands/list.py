@@ -1,10 +1,24 @@
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
+import argparse
 #import sys, pdb
 
-alias = ["list", "l"]
-def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
+aliases = ["list", "l"]
+
+def add_to_subparsers(parser, subparsers):
+    parser_list = subparsers.add_parser("list", aliases=aliases, add_help=False, help="list references")
+    parser_list.add_argument("-t", "--type", nargs="*", default=[], action="extend",
+                            metavar="<entry_type>",
+                            help="""<entry_type> like "book" or "article\"""")
+    parser_list.add_argument("-f", "--field", nargs="*", default=[], action="extend",
+                            metavar="<field_name> <value>",
+                            help="""<field_name> accompanied by its <value> like 'author "Aku Ankka"'""")
+    parser_list.add_argument("-s", "--sort", nargs="*", default=[], action="extend",
+                            metavar="<field_name> [numeric] [desc]",
+                            help="""<field_name> with two optional modifiers [numeric] [desc] (to make the order descending) like 'year numeric desc' to sort by year treated as a number in descending order or "title" to sort by title in ascending order""")
+
+def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     """
     Listaa referenssit.
 
@@ -40,9 +54,15 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, args: list[str]):
     # Mietintää:
     # > list AVAIN  # voisi listata vain kyseisen entryn
     # voi myös lisätä vaikka avainsanan key-only, jolloin tulostetaan vain key
+
+    :param ns: Mallia: Namespace(command_name='list', type=['book'], field=['author', 'Aku Ankka'], sort=['year', 'numeric', 'reverse'])
+    ns.type
     """
     data = data_manager.get_data()
     arr = dict_to_list(data.entries)
+
+    # TODO
+
     result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}]) # Esimerkki rulet TODO: niiden parseeminen argumenteista.
     for entry in result:
         io.write(entry.to_string("bibtex"))

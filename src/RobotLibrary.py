@@ -1,6 +1,6 @@
 from interpreter import Interpreter
 from stub_bibtex_manager import StubBibtexManager
-from commands.index import commands
+from commands import commands
 from stub_io import StubIO
 
 
