@@ -1,6 +1,5 @@
 from interpreter import Interpreter
 from stub_bibtex_manager import StubBibtexManager
-from commands.index import commands
 from stub_io import StubIO
 
 
@@ -12,7 +11,7 @@ class RobotLibrary:
         self.test = "testi"
         self.io = StubIO()
         self.data_manager = StubBibtexManager()
-        self.interpreter = Interpreter(self.io, self.data_manager, commands)
+        self.interpreter = Interpreter(self.io, self.data_manager)
 
     def run_application(self):
         self.interpreter.run()

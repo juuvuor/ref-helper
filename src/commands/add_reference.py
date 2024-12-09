@@ -1,7 +1,12 @@
-import sys, pdb # debug
+#import sys, pdb # debug
 
-alias = ["add_reference", "add", "a"]
-def execute(io, data_manager, args):
+
+aliases = ["add", "a"]
+
+def add_to_subparsers(parser, subparsers):
+    parser_add = subparsers.add_parser("add", aliases=aliases, add_help=False, help="add a reference")
+
+def execute(io, data_manager, ns):
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     try:
@@ -9,7 +14,6 @@ def execute(io, data_manager, args):
         io.write(f"Lisätty lähde {key}, {entry_type}, {fields}.")
     except Exception as e:
         io.write(f'Lähdeavain "{key}" on jo olemassa!')
-    
 
 def prompt_for_reference(io):
     """

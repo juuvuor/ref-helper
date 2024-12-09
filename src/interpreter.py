@@ -1,13 +1,31 @@
 import re
-import sys, pdb # debug
+import argparse
+import commands
+#import sys, pdb # debug
+
+
+latest_error_message = "" 
+class CustomArgumentParser(argparse.ArgumentParser):
+    """ Customoitu argument parser, koska error printataan muuten stderr. """
+    def error(self, message):
+        global latest_error_message
+        latest_error_message = message
+        raise Exception(message)
 
 
 class Interpreter:
-    """ Komentotulkki. """
-    def __init__(self, io, data_manager, commands):
+    """
+    Komentotulkki.
+    Tulostusten pitäisi tulla annettuun io-luokkaan, mutta voi olla,
+    että argparse jossain edge-tapauksessa printtaa stdout tai stderr..
+    bug reporttia, niin korjataan.
+    """
+    def __init__(self, io, data_manager):
         self.io = io
         self.data_manager = data_manager
-        self.commands = commands
+        self.parser = CustomArgumentParser(prog="", add_help=False)
+        self.subparsers = self.parser.add_subparsers(metavar="<command>", dest="command_name")
+        self.commands = commands.init_commands(self.parser, self.subparsers)
 
     def run(self):
         while True:
@@ -16,9 +34,6 @@ class Interpreter:
                 result = self.executeline()
                 if result == "exit":
                     break
-                # Testit toimivat, koska ne hyödyntävät tätä statementtia, mikä oli alkuunsakin bugi.
-                #if result == None:
-                #    break
             except Exception as e:
                 if hasattr(e, "message"):
                     print(f"Error: {e.message}")
@@ -28,26 +43,37 @@ class Interpreter:
     def executeline(self):
         """ Suorittaa yhden rivin. """
         line = self.io.read("ref-helper> ")
-        parts = Interpreter.to_args(line)
-        command = self.get_command(parts)
+        parts = Interpreter.str_to_args(line)
+
+        try:
+            parsed = self.parser.parse_args(parts)
+        except Exception or SystemExit:
+            parsed = parts
+
+        # parsed joko argparse.Namespace tai list[str]
+        if isinstance(parsed, list):
+            command_name = parsed[0] if len(parsed) > 0 else ""
+        else:
+            command_name = parsed.command_name or ""
+
+        command = self.commands.get(command_name)
         if command == None:
-            # TODO: Muuta viesti paremmaks ja mahollisesti jopa ulkoista se.
-            self.io.write("Tunnistamaton komento. help auttaa")
-            return
-        return command["execute"](self.io, self.data_manager, parts)
+            if len(command_name) > 0:
+                self.io.write("Unrecognized command.")
+            self.parser.print_help(self.io)
+        else:
+            if isinstance(parsed, argparse.Namespace):
+                return command(self.io, self.data_manager, parsed)
+            else:
+                self.io.write(command_name + ": error: " + latest_error_message)
+                self.subparsers.choices.get(command_name).print_help(self.io)
 
     @staticmethod
-    def to_args(str: str):
+    def str_to_args(str: str):
         """
         Jakaa merkkijonon osiin huomioiden lainausmerkit.
         NOTE: Tällä hetkellä ei ota huomioon escapettuja lainausmerkkejä.
         src: https://stackoverflow.com/questions/554013/regular-expression-to-split-on-spaces-unless-in-quotes
         """
-        return re.findall(r'\w+|"[\w\s]*"', str)
-
-    def get_command(self, parts):
-        """ Hakee ensimmäistä merkkijonoa vastaavan komennon. """
-        for command in self.commands:
-            for alias in command["alias"]:
-                if alias == parts[0]:
-                    return command
+        return str.split(" ")
+        #return re.findall(r'\w+|"[\w\s]*"', str) # jättää viivat ulkopuolelle, mitkä vaaditaan argumentteihin

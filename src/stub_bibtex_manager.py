@@ -21,6 +21,11 @@ class StubBibtexManager:
 
 
 def create_data():
+    """
+    Luo testaustarkoituksiin BibliographyData-objektin.
+    Tätä hyödyntävät testit kannattaa rakentaa huomioiden sen,
+    että tämä saattaa vielä laajentua tästä esim lisäentryillä.
+    """
     return BibliographyData(entries = {
         "VPL11": Entry("inproceedings", {
             "author": "Vihavainen, Arto and Paksula, Matti and Luukkainen, Matti",
