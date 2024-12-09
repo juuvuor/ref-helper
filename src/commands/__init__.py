@@ -1,5 +1,6 @@
 import commands.list as c_list
 import commands.add_reference as c_add_reference
+import commands.edit_reference as c_edit_reference
 
 
 """
@@ -21,7 +22,8 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
 # NOTE: Tänne lisätään komennot, mitkä sitten alustetaan funktiolla init_commands.
 command_modules = [
     c_list,
-    c_add_reference
+    c_add_reference,
+    c_edit_reference
 ]
 
 

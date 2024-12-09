@@ -13,3 +13,7 @@ class StubIO:
             return ""
     def add_input(self, value):
         self.inputs.append(value)
+    
+    def add_input2(self,value1,value2):
+        self.inputs.append(value1)
+        self.inputs.append(value2)

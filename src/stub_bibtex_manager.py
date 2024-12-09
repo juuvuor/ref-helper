@@ -19,6 +19,14 @@ class StubBibtexManager:
     def write(self):
         pass
 
+    def update_reference(self, key, entry_type, fields):
+        if key in self.data.entries:
+            entry = self.data.entries[key]
+            entry.fields.update(fields)
+        else:
+            self.data.entries[key] = Entry(entry_type, fields)
+
+
 
 def create_data():
     """
@@ -44,5 +52,8 @@ def create_data():
             "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
             "year": "2008",
             "publisher": "Prentice Hall"
+        }),
+         "edittausta": Entry("book", {
+            "sivu": "20",
         })
     })

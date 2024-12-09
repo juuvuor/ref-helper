@@ -1,12 +1,15 @@
 #import sys, pdb # debug
 
-
+from console_io import ConsoleIO
+from bibtex_manager import BibtexManager
+from pybtex.database import OrderedCaseInsensitiveDict, Entry
+import argparse
 aliases = ["add", "a"]
 
 def add_to_subparsers(parser, subparsers):
     parser_add = subparsers.add_parser("add", aliases=aliases, add_help=False, help="add a reference")
 
-def execute(io, data_manager, ns):
+def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     try:

@@ -26,6 +26,17 @@ class BibtexManager:
         self.data.add_entry(key, entry)
         self.write()
 
+    def update_reference(self, key, entry_type, fields):
+        """ Päivittää lähdeviitteen uusilla tiedoilla. 
+        :param key: lähdeviitten id, voi olla numero tai merkkijono.
+        :param entry_type: lähdeviitteen tyyppi esim kirja, artikkeli
+        :param fields: lähdeviitteen sisältö
+        """
+        entry = Entry(entry_type, fields)
+        self.data.entries[key] = entry
+        self.write()
+
+
     def write(self):  
         """
         Kirjoittaa bib tiedostoon.

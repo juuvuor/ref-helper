@@ -21,6 +21,9 @@ class RobotLibrary:
     
     def input(self, value):
         self.io.add_input(value)
+    
+    def input_edit(self,value1,value2):
+        self.io.add_input2(value1,value2)
 
     def instance_should_contain(self, value):
         testi = self.test
