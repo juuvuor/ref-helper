@@ -7,8 +7,8 @@ commands = [
     { "alias": c_add_reference.alias, "execute": c_add_reference.execute },
     { "alias": c_edit_reference.alias, "execute": c_edit_reference.execute },
     {
-        "alias": ["help", "h"],
-        "execute": lambda io, data_manager, args : io.write("Usage: TODO") # TODO
+    "alias": ["help", "h"],
+    "execute": lambda io, data_manager, args: io.write("Available commands: list, add_reference, edit_reference")
     },
     {
         "alias": ["exit", "q"],

@@ -5,15 +5,22 @@ def execute(io, data_manager, args):
     """
     Tarkistaa onko syötettyä keytä olemassa datassa ja editoi sitä jos on.
     """
-    #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     try:
-        key_to_edit = args[1]
-        # tässä poikkeus jos avainta ei löydy
+        if len(args) < 1:
+            io.write("Virhe: Syötä lähdeavaimen nimi.")
+            return
+
+        key_to_edit = args[1]  # Varmista, että key_to_edit on aina määritelty
+        # Tässä poikkeus jos avainta ei löydy
         (entry_type, fields) = prompt_for_reference(io)
         data_manager.update_reference(key_to_edit, entry_type, fields)
         io.write(f"Päivitetty lähde {key_to_edit}, {entry_type}, {fields}.")
+    except KeyError:
+        io.write(f'Lähdeavainta "{key_to_edit}" ei löydetty!')
+    except IndexError:
+        io.write("Virhe: Lähdeavaimen nimi puuttuu syötteestä.")
     except Exception as e:
-        io.write(f'Lähdeavaita "{key_to_edit}" ei löydetty!')    
+        io.write(f"Virhe: {str(e)}")
 
 def prompt_for_reference(io):
     """
