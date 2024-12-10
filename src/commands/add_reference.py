@@ -13,6 +13,14 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     try:
+        if not key:
+            io.write("Lähteelle täytyy lisätä lähdeviitteen id!")
+            return
+
+        if not entry_type:
+            io.write("Lähteelle täytyy lisätä lähdeviitteen tyyppi!")
+            return
+
         data_manager.add_reference(key, entry_type, fields)
         io.write(f"Lisätty lähde {key}, {entry_type}, {fields}.")
     except Exception as e:

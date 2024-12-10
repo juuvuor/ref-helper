@@ -1,8 +1,8 @@
 import sys, pdb # debug
+import argparse
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
-import argparse
 
 aliases = ["edit", "e"]
 
