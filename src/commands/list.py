@@ -40,62 +40,59 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     data = data_manager.get_data()
     arr = dict_to_list(data.entries)
 
-
-    # Hidas mutta toimii
-    # Suodatus tyypin perusteella 
     if ns.type:
-        filtered_entries = []
-        for entry in arr:
-            for sublist in ns.type:
-                if entry.type in sublist:
-                    # Jos on, lisää entry filtered_entries-listaan
-                    filtered_entries.append(entry)
-        
-        arr = filtered_entries
-
-    # TODO 
-    # Suodatus kenttien perusteella
-    # if ns.field:
-    #     print field
-    #     for field, value in ns.field:
-    #         arr = [entry for entry in arr if field in entry.type in ns.type]
-
-    # TODO 
-    # # Lajittelu sääntöjen perusteella
-    # if ns.sort:
-    #     sort_rules = []
-    #     for i in range(0, len(ns.sort), 3):
-    #         field = ns.sort[i]
-    #         numeric = (i + 1 < len(ns.sort) and ns.sort[i + 1] == 'numeric')
-    #         reverse = (i + 2 < len(ns.sort) and ns.sort[i + 2] == 'desc')
-    #         sort_rules.append({"field": field, "numeric": numeric, "reverse": reverse})
-
-    #     arr = sort_by_rules(arr, sort_rules)
+        arr = filter_by_type(arr, ns)
+    elif ns.field:
+        arr = filter_by_field(arr, ns)
+    
+    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
+    # print(f'päästy resultista ulos: {result}')
 
     # Tulostetaan tulokset
-    for entry in arr:
+    for entry in result:
          io.write(entry.to_string("bibtex"))
 
+def filter_by_type(arr, ns):
+    """
+        Hidas mutta toimii
+        Suodatus tyypin perusteella 
+    """
+    filtered_entries = []
+    for entry in arr:
+        for sublist in ns.type:
+            if entry.type in sublist:
+                # Jos on, lisää entry filtered_entries-listaan
+                filtered_entries.append(entry)
+        
+    return filtered_entries
 
 
-    
+def filter_by_field(arr, ns):
+    #TODO
+    # # Suodatus kenttien perusteella
+    # if ns.field:
+    #     filtered_entries = []
+    #     for field_value_pair in ns.field:
+    #         for i in range(0, len(field_value_pair), 2):
+    #             field = field_value_pair[i]
+    #             value = field_value_pair[i + 1]
+    #             for entry in arr:
+    #                 if field == 'author':
+    #                     # Tarkista, onko kirjailija entry.persons['author'] listassa
+    #                     if any(value in person for person in entry.persons.get('author', [])):
+    #                         filtered_entries.append(entry)
+    #                 elif field == 'title':
+    #                     # Tarkista, onko otsikko entry.fields listassa
+    #                     if any(value == title for key, title in entry.fields if key == 'title'):
+    #                         filtered_entries.append(entry)
+    #                 else:
+    #                     # Tarkista muut kentät entry.fields listassa
+    #                     if any(value == field_value for key, field_value in entry.fields if key == field):
+    #                         filtered_entries.append(entry)
+    #     arr = filtered_entries
+    return
 
-def sort_by_rules(arr, rules):
-    """
-    Lajittelee listan sääntöjen perusteella.
-    """
-    for rule in reversed(rules):
-        field = rule["field"]
-        numeric = rule.get("numeric", False)
-        reverse = rule.get("reverse", False)
-        arr.sort(key=lambda x: int(x[field]) if numeric else x[field], reverse=reverse)
-    return arr
 
-def dict_to_list(entries):
-    """
-    Muuntaa sanakirjan listaksi.
-    """
-    return [entry for entry in entries.values()]
 
 def sort_by_rules(arr: list, rules: list[dict]):
     """
