@@ -1,18 +1,33 @@
 #import sys, pdb # debug
 
+import argparse
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
-import argparse
 aliases = ["add", "a"]
 
 def add_to_subparsers(parser, subparsers):
-    parser_add = subparsers.add_parser("add", aliases=aliases, add_help=False, help="add a reference")
+    """ Pyytää subparseria lisäämään komennon """
+    subparsers.add_parser(
+        "add",
+        aliases=aliases,
+        add_help=False,
+        help="add a reference"
+    )
 
 def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
+    """ Suorittaa koomennon """
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
     try:
+        if not key:
+            io.write("Lähteelle täytyy lisätä lähdeviitteen id!")
+            return
+
+        if not entry_type:
+            io.write("Lähteelle täytyy lisätä lähdeviitteen tyyppi!")
+            return
+
         data_manager.add_reference(key, entry_type, fields)
         io.write(f"Lisätty lähde {key}, {entry_type}, {fields}.")
     except Exception as e:

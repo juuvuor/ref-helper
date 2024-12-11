@@ -1,15 +1,18 @@
+"""
+Toteuttaa luokat komentojen tulkkaamiselle sekä customoidun arg parserin
+"""
 import re
 import argparse
 import commands
 #import sys, pdb # debug
 
 
-latest_error_message = "" 
+LATEST_ERROR_MESSAGE = ""
 class CustomArgumentParser(argparse.ArgumentParser):
     """ Customoitu argument parser, koska error printataan muuten stderr. """
     def error(self, message):
-        global latest_error_message
-        latest_error_message = message
+        global LATEST_ERROR_MESSAGE
+        LATEST_ERROR_MESSAGE = message
         raise Exception(message)
 
 
@@ -28,6 +31,7 @@ class Interpreter:
         self.commands = commands.init_commands(self.parser, self.subparsers)
 
     def run(self):
+        """ Kysyy käyttäjältä komentoja """
         while True:
             #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
             try:
@@ -57,16 +61,16 @@ class Interpreter:
             command_name = parsed.command_name or ""
 
         command = self.commands.get(command_name)
-        if command == None:
+        if command is None:
             if len(command_name) > 0:
                 self.io.write("Unrecognized command.")
             self.parser.print_help(self.io)
         else:
             if isinstance(parsed, argparse.Namespace):
                 return command(self.io, self.data_manager, parsed)
-            else:
-                self.io.write(command_name + ": error: " + latest_error_message)
-                self.subparsers.choices.get(command_name).print_help(self.io)
+
+            self.io.write(command_name + ": error: " + LATEST_ERROR_MESSAGE)
+            self.subparsers.choices.get(command_name).print_help(self.io)
 
     @staticmethod
     def str_to_args(str: str):
@@ -74,5 +78,7 @@ class Interpreter:
         # Säännöllinen lauseke matchaa kaiken non-whitespacen ja huomioi lainausmerkit.
         result = re.findall(r'".*?"|\S+', str)
         # Säännöllinen lauseke jättää lainausmerkit ja tämä poistaa ne.
-        result = list(map(lambda arg : arg[1:-1] if arg[0] == '"' and arg[-1] == '"' else arg, result))
+        result = list(map(
+                        lambda arg : arg[1:-1] if arg[0] == '"' and arg[-1] == '"' else arg, result)
+                     )
         return result
