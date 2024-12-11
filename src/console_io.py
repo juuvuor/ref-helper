@@ -1,3 +1,6 @@
+"""
+Toteuttaa luokan konsole io
+"""
 class ConsoleIO:
     """ Injektoitava IO luokka. """
     def write(self, value):

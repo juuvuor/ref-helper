@@ -37,6 +37,7 @@ def init_commands(parser, subparsers):
 
 
 def add_command(commands, parser, subparsers, command_module):
+    """ Lisää komennot subparserille """
     command_module.add_to_subparsers(parser, subparsers)
     for alias in command_module.aliases:
         commands.update({alias: command_module.execute})
@@ -47,7 +48,12 @@ def init_default_commands(commands, parser, subparsers):
     Hoitaa erikoisten komentojen kuten help ja exit alustamisen.
     TODO: Paloittele
     """
-    parser_help = subparsers.add_parser("help", aliases=["help", "h"], add_help=False, help="usage: help [command]")
+    parser_help = subparsers.add_parser(
+                                        "help",
+                                        aliases=["help", "h"],
+                                        add_help=False,
+                                        help="usage: help [command]"
+                                    )
     parser_help.add_argument("command", nargs="*", default=[], action="extend")
 
     # Määritellään custom help-komento
@@ -56,7 +62,7 @@ def init_default_commands(commands, parser, subparsers):
             parser.print_help(io)
         else:
             command = subparsers.choices.get(ns.command[0])
-            if command == None:
+            if command is None:
                 io.write("Unrecognized command.")
                 parser.print_help(io)
             else:
@@ -69,4 +75,3 @@ def init_default_commands(commands, parser, subparsers):
     parser_exit.add_argument("command", nargs="*", default=[], action="extend")
     for alias in ["exit", "q"]:
         commands.update({alias: lambda io, data_manager, ns : "exit"})
-

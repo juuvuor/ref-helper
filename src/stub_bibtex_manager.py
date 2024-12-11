@@ -1,3 +1,6 @@
+"""
+Toteuttaa testausta varten BibtexManager tyngän
+"""
 from pybtex.database import BibliographyData, Entry
 
 
@@ -7,19 +10,24 @@ class StubBibtexManager:
         self.data = BibliographyData()
 
     def populate(self):
+        """ Luo testidataa """
         self.data = create_data()
 
     def get_data(self):
+        """ Palauttaa datan """
         return self.data
 
     def add_reference(self, key, entry_type, fields):
+        """ Lisää lähteen """
         entry = Entry(entry_type, fields)
         self.data.add_entry(key, entry)
 
     def write(self):
+        """ Tynkä """
         pass
 
     def update_reference(self, key, entry_type, fields):
+        """ Päivittää olemassa olevaa lähdettä """
         if key in self.data.entries:
             entry = self.data.entries[key]
             entry.fields.update(fields)

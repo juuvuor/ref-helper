@@ -1,4 +1,4 @@
-import sys, pdb # debug
+#import sys, pdb
 import argparse
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
@@ -7,7 +7,12 @@ from pybtex.database import OrderedCaseInsensitiveDict, Entry
 aliases = ["edit", "e"]
 
 def add_to_subparsers(parser, subparsers):
-    parser_edit = subparsers.add_parser("edit", aliases=aliases, add_help=False, help="edit a reference")
+    """ Pyytää subparseria lisäämään komennon """
+    parser_edit = subparsers.add_parser("edit",
+        aliases=aliases,
+        add_help=False,
+        help="edit a reference"
+    )
     parser_edit.add_argument("key_to_edit", help="The key of the reference to edit")
 
 def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):

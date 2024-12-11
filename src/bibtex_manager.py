@@ -1,6 +1,9 @@
+"""
+Toteuttaa luokan BibtexManager
+"""
+from os.path import isfile
 from pybtex.database import BibliographyData, Entry
 from pybtex.database.input.bibtex import Parser
-from os.path import isfile
 
 
 class BibtexManager:
@@ -11,7 +14,8 @@ class BibtexManager:
     """
     def __init__(self, file_path):
         self.file_path = file_path
-        # Data muotoa: BibliographyData  https://docs.pybtex.org/api/parsing.html#pybtex.database.BibliographyData
+        # Data muotoa: BibliographyData
+        # https://docs.pybtex.org/api/parsing.html#pybtex.database.BibliographyData
         self.data = Parser().parse_file(file_path) if isfile(file_path) else BibliographyData()
 
     def get_data(self):
@@ -19,7 +23,7 @@ class BibtexManager:
         Palauttaa suoraan sisäisesti käytetyn datan, johon ulkoisesti tehdään muutoksia.
         """
         return self.data
-    
+
     def add_reference(self, key, entry_type, fields):
         """ Lisää uuden lähdeviitteen. 
         :param key: lähdeviitten id, voi olla numero tai merkkijono.
@@ -48,7 +52,7 @@ class BibtexManager:
         self.data.entries.pop(key)
         self.write()
 
-    def write(self):  
+    def write(self):
         """
         Kirjoittaa bib tiedostoon.
         TODO: backup
