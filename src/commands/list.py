@@ -1,14 +1,19 @@
+import argparse
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
-import argparse
 #import sys, pdb
 
 
 aliases = ["list", "l"]
 
 def add_to_subparsers(parser, subparsers):
-    parser_list = subparsers.add_parser("list", aliases=aliases, add_help=False, help="list references")
+    """ Pyytää subparseria lisäämään komennon """
+    parser_list = subparsers.add_parser("list",
+        aliases=aliases,
+        add_help=False,
+        help="list references"
+    )
     parser_list.add_argument("-t", "--type", nargs="*", default=[], action="append",
                             metavar="<entry_type>",
                             help="""<entry_type> like "book" or "article\"""")
@@ -23,7 +28,8 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     """
     Listaa referenssit.
 
-    # Esimerkki inputit interpreteriin, mitkä muuttuvat argparse.Namespace muotoon add_to_subparsers määrittelemällä tavalla.
+    # Esimerkki inputit interpreteriin, mitkä muuttuvat argparse.
+    # Namespace muotoon add_to_subparsers määrittelemällä tavalla.
     ["list", "-t", "book", "article"]
     ["list", "--type", "book", "article"]
     ["list", "--field", "title", "Akun kirja", "author", "Aku Ankka"]
@@ -32,7 +38,12 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     ["list", "-t" "book", "-f", "author", "Aku Ankka", "-s", "year", "reverse"]
     ["list", "-t" "book", "-f", "author", "Aku Ankka", "-s", "year", "numeric", "reverse"]
 
-    :param ns: Mallia: Namespace(command_name='list', type=[], field=[['author', 'Aku'], ['author', 'Roope']], sort=[])
+    :param ns: Mallia: Namespace(
+                            command_name='list',
+                            type=[], field=[['author', 'Aku'],
+                            ['author', 'Roope']],
+                            sort=[]
+                        )
     """
 
     print("DEBUG: list namespace: " + str(ns)) # debug
@@ -42,7 +53,8 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
 
     # TODO
 
-    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}]) # Esimerkki rulet TODO: niiden parseeminen argumenteista.
+    # Esimerkki rulet TODO: niiden parseeminen argumenteista.
+    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
     for entry in result:
         io.write(entry.to_string("bibtex"))
 
@@ -51,11 +63,14 @@ def sort_by_rules(arr: list, rules: list[dict]):
     """
     Järjestää annetun listan annettujen sääntöjen mukaan.
     Jos field puuttuu entrystä, niin se vain korvataan tyhjällä merkkijonolla "".
-    Jos rule on merkattu numeric, niin se koittaa muuttaa floatiksi ja jos ei onnistu, niin arvoksi asetetaan nolla.
-    # NOTE: Arvoksi vois tällöin asettaa vaikka pienimmän tai suurimman mahdollisen luvun nii ne saadaan listauksen alkuun tai perälle.
+    Jos rule on merkattu numeric, niin se koittaa muuttaa floatiksi ja
+    jos ei onnistu, niin arvoksi asetetaan nolla.
+    # NOTE: Arvoksi vois tällöin asettaa vaikka pienimmän tai suurimman mahdollisen
+    # luvun nii ne saadaan listauksen alkuun tai perälle.
     :param arr: Järjestettävä lista
     :param rules: Muotoa [{"field": str, "numeric": bool, "reverse": bool}]
-    Huom: Entry-objektissa author ei mene fields-attribuuttiin vaan persons-attribuuttiin, mikä on luokkaa OrderedCaseInsensitiveDict.
+    Huom: Entry-objektissa author ei mene fields-attribuuttiin vaan
+    persons-attribuuttiin, mikä on luokkaa OrderedCaseInsensitiveDict.
     """
     #print(rules) # debug
     def key_func(entry: Entry):
@@ -103,14 +118,16 @@ def resolve_entry_field_value(entry: Entry, field: str, persons_to_str = True):
     :param persons_to_str: persons on defaultisti lista Person-olioista.
     """
     if field == "author": # voi olla muitakin poikkeuksia
-        value = entry.persons.get("author") # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
-        if value != None and persons_to_str:
-            value = list(map(lambda person : str(person), value)) # Muutetaan Person => str sukunimi ensin
+        value = entry.persons.get("author")
+        # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
+        if value is not None and persons_to_str:
+            value = list(map(lambda person : str(person), value))
+            # Muutetaan Person => str sukunimi ensin
             #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
             value = ";".join(value) # Saadaan yhteen merkkijonoon.
     else:
         value = entry.fields.get(field)
-    return "" if value == None else value
+    return "" if value is None else value
 
 
 def dict_to_list(dict: OrderedCaseInsensitiveDict):
@@ -119,4 +136,3 @@ def dict_to_list(dict: OrderedCaseInsensitiveDict):
     for key in dict:
         result.append(dict[key])
     return result
-
