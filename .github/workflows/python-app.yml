@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: poetry install
     - name: Run test and create coverage report with pytest
-      run: poetry run coverage run --branch -m pytest
+      run: poetry run coverage run --branch -m pytest -W ignore::DeprecationWarning
     - name: Run tests and create coverage report with robot
       run: poetry run coverage run -m robot src/tests
     - name: Run Pylint
