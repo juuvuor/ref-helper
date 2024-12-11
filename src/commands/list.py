@@ -60,7 +60,8 @@ def filter_by_type(arr, ns):
     filtered_entries = []
     for entry in arr:
         for sublist in ns.type:
-            if entry.type in sublist:
+            sublist_lower = [item.lower() for item in sublist] # ei väliä onko tyyppi kirjoitettu isolla vai pienellä
+            if entry.type in sublist_lower:
                 # Jos on, lisää entry filtered_entries-listaan
                 filtered_entries.append(entry)
         
@@ -68,29 +69,26 @@ def filter_by_type(arr, ns):
 
 
 def filter_by_field(arr, ns):
-    #TODO
-    # # Suodatus kenttien perusteella
-    # if ns.field:
-    #     filtered_entries = []
-    #     for field_value_pair in ns.field:
-    #         for i in range(0, len(field_value_pair), 2):
-    #             field = field_value_pair[i]
-    #             value = field_value_pair[i + 1]
-    #             for entry in arr:
-    #                 if field == 'author':
-    #                     # Tarkista, onko kirjailija entry.persons['author'] listassa
-    #                     if any(value in person for person in entry.persons.get('author', [])):
-    #                         filtered_entries.append(entry)
-    #                 elif field == 'title':
-    #                     # Tarkista, onko otsikko entry.fields listassa
-    #                     if any(value == title for key, title in entry.fields if key == 'title'):
-    #                         filtered_entries.append(entry)
-    #                 else:
-    #                     # Tarkista muut kentät entry.fields listassa
-    #                     if any(value == field_value for key, field_value in entry.fields if key == field):
-    #                         filtered_entries.append(entry)
-    #     arr = filtered_entries
-    return
+    """
+    Suodatus kenttien perusteella
+    """
+    #TODO: ei pystytyä vielä kirjailijan mukaan filtteröimään
+    filtered_entries = []
+    for field_value_pair in ns.field:
+        # print(f'field_value: {field_value_pair}')
+        for i in range(0, len(field_value_pair), 2):
+            print('käydään täällä')
+            field = field_value_pair[i].lower()
+            value = field_value_pair[i + 1].lower()
+            print(f'field: {field}')
+            print(f'value: {value}')
+            for entry in arr:
+                entry_value = resolve_entry_field_value(entry, field)
+                print(f'entry_value: {entry_value}')
+                if entry_value == value:
+                    filtered_entries.append(entry)
+    arr = filtered_entries
+    return arr
 
 
 
