@@ -24,3 +24,5 @@ jobs:
       run: poetry install
     - name: Run tests and create coverage report
       run: poetry run coverage run -m robot src/tests
+    - name: Run Pylint
+      run: poetry run pylint src/
