@@ -1,7 +1,7 @@
 import argparse
+from pybtex.database import OrderedCaseInsensitiveDict, Entry
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
-from pybtex.database import OrderedCaseInsensitiveDict, Entry
 #import sys, pdb
 
 
@@ -51,12 +51,56 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     data = data_manager.get_data()
     arr = dict_to_list(data.entries)
 
-    # TODO
+    if ns.type:
+        arr = filter_by_type(arr, ns)
+    if ns.field:
+        arr = filter_by_field(arr, ns)
 
+    result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
+
+    # Tulostetaan tulokset
     # Esimerkki rulet TODO: niiden parseeminen argumenteista.
     result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
     for entry in result:
         io.write(entry.to_string("bibtex"))
+
+def filter_by_type(arr, ns):
+    """
+        Hidas mutta toimii
+        Suodatus tyypin perusteella 
+    """
+    filtered_entries = []
+    for entry in arr:
+        for sublist in ns.type:
+            sublist_lower = [item.lower() for item in sublist] # ei väliä onko tyyppi kirjoitettu isolla vai pienellä
+            if entry.type in sublist_lower:
+                filtered_entries.append(entry)
+    arr = filtered_entries
+    return arr
+
+
+def filter_by_field(arr, ns):
+    """
+    Suodatus kenttien perusteella
+    """
+    # TODO: jostain syystä vuosiluvun filteröintiä ei huomioida jos mukana kirjailija atribuutti
+    filtered_entries = []
+    seen_entries = [] # estetään dublikaattien muodostus
+    for field_value_pair in ns.field:
+        for i in range(0, len(field_value_pair), 2):
+            field = field_value_pair[i].lower()
+            value = field_value_pair[i + 1].lower()
+            if field == 'author':
+                value = value.title()
+            for entry in arr:
+                entry_value = resolve_entry_field_value(entry, field)
+                entry_value_tile = resolve_entry_field_value(entry, 'title')
+                if value in entry_value and entry_value_tile not in seen_entries:
+                    filtered_entries.append(entry)
+                    seen_entries.append(entry_value_tile)
+    arr = filtered_entries
+    return arr
+
 
 
 def sort_by_rules(arr: list, rules: list[dict]):
@@ -80,9 +124,8 @@ def sort_by_rules(arr: list, rules: list[dict]):
         Tai ainakin se tekee näin tuplejen kanssa..
         """
         result = [] # esimerkki ['1991', 'Luukkainen, Matti;Paksula, Matti;Vihavainen, Arto']
-        for i in range(len(rules)):
+        for rule in rules:
             #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
-            rule = rules[i]
             field = rule.get("field")
             # avain pienistä aakkosista ja trimmataan whitespacet alusta ja lopusta
             # Voi olla vöhän jännä jos henkilöiden nimissä on paljon whitespacea, koska niitä ei trimmata tällöin.
@@ -121,7 +164,7 @@ def resolve_entry_field_value(entry: Entry, field: str, persons_to_str = True):
         value = entry.persons.get("author")
         # Esim: [Person('Collins, Allan'), Person('Brown, John Seely'), Person('Holum, Ann')]
         if value is not None and persons_to_str:
-            value = list(map(lambda person : str(person), value))
+            value = list(map(str, value))
             # Muutetaan Person => str sukunimi ensin
             #value.sort(key = lambda person : str(person)) # Nimet aakkosjärjestykseen
             value = ";".join(value) # Saadaan yhteen merkkijonoon.
@@ -130,9 +173,9 @@ def resolve_entry_field_value(entry: Entry, field: str, persons_to_str = True):
     return "" if value is None else value
 
 
-def dict_to_list(dict: OrderedCaseInsensitiveDict):
+def dict_to_list(src_dict: OrderedCaseInsensitiveDict):
     """ Muuttaa dict listaksi. """
     result = []
-    for key in dict:
-        result.append(dict[key])
+    for key in src_dict:
+        result.append(src_dict[key])
     return result
