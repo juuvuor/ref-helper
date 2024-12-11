@@ -6,19 +6,18 @@ aliases = ["delete", "d"]
 
 def add_to_subparsers(parser, subparsers):
     """ Pyytää subparseria lisäämään komennon """
-    delete_parser = subparsers.add_parser(
-        "delete",
+    delete_parser = subparsers.add_parser("delete",
         aliases=aliases,
         add_help=False,
         help="delete a reference"
     )
-    delete_parser.add_argument('delete', help="delete a reference using id")
+    delete_parser.add_argument('delete_key', help="The key of the reference to delete")
 
 def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
     """ Suorittaa koomennon """
-    key = io.read("Anna lähdeviitteen id: ")
+    delete_key = args.delete_key
     try:
-        data_manager.delete_reference(key)
-        io.write(f"Poistettu lähde {key}.")
+        data_manager.delete_reference(delete_key)
+        io.write(f"Poistettu lähde {delete_key}.")
     except KeyError:
-        io.write(f'Lähdeavainta "{key}" ei löytynyt!')
+        io.write(f'Lähdeavainta "{delete_key}" ei löytynyt!')
