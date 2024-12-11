@@ -42,11 +42,12 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
 
     if ns.type:
         arr = filter_by_type(arr, ns)
-    elif ns.field:
+    if ns.field:
         arr = filter_by_field(arr, ns)
+        
+        
     
     result = sort_by_rules(arr, [{"field": "year"}, {"field": "author", "reverse": True}])
-    # print(f'päästy resultista ulos: {result}')
 
     # Tulostetaan tulokset
     for entry in result:
@@ -62,31 +63,30 @@ def filter_by_type(arr, ns):
         for sublist in ns.type:
             sublist_lower = [item.lower() for item in sublist] # ei väliä onko tyyppi kirjoitettu isolla vai pienellä
             if entry.type in sublist_lower:
-                # Jos on, lisää entry filtered_entries-listaan
                 filtered_entries.append(entry)
-        
-    return filtered_entries
+    arr = filtered_entries
+    return arr
 
 
 def filter_by_field(arr, ns):
     """
     Suodatus kenttien perusteella
     """
-    #TODO: ei pystytyä vielä kirjailijan mukaan filtteröimään
+    # TODO: jostain syystä vuosiluvun filteröintiä ei huomioida jos mukana kirjailija atribuutti
     filtered_entries = []
+    seen_entries = [] # estetään dublikaattien muodostus
     for field_value_pair in ns.field:
-        # print(f'field_value: {field_value_pair}')
         for i in range(0, len(field_value_pair), 2):
-            print('käydään täällä')
             field = field_value_pair[i].lower()
             value = field_value_pair[i + 1].lower()
-            print(f'field: {field}')
-            print(f'value: {value}')
+            if field == 'author':
+                value = value.title()
             for entry in arr:
                 entry_value = resolve_entry_field_value(entry, field)
-                print(f'entry_value: {entry_value}')
-                if entry_value == value:
+                entry_value_tile = resolve_entry_field_value(entry, 'title')
+                if value in entry_value and entry_value_tile not in seen_entries:
                     filtered_entries.append(entry)
+                    seen_entries.append(entry_value_tile)
     arr = filtered_entries
     return arr
 
