@@ -16,8 +16,12 @@ def add_to_subparsers(parser, subparsers):
 def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
     """ Suorittaa koomennon """
     delete_key = args.delete_key
-    try:
-        data_manager.delete_reference(delete_key)
-        io.write(f"Poistettu lähde {delete_key}.")
-    except KeyError:
-        io.write(f'Lähdeavainta "{delete_key}" ei löytynyt!')
+    confirmation = io.read(f"Poistetaanko lähde {delete_key}? (k/e)")
+    if confirmation.lower() == 'k':
+        try:
+            data_manager.delete_reference(delete_key)
+            io.write(f"Poistettu lähde {delete_key}.")
+        except KeyError:
+            io.write(f'Lähdeavainta "{delete_key}" ei löytynyt!')
+    else:
+        io.write("Poistoa ei suoritettu.")
