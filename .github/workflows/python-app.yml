@@ -28,3 +28,7 @@ jobs:
       run: poetry run coverage run -m robot src/tests
     - name: Run Pylint
       run: poetry run pylint src/
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
