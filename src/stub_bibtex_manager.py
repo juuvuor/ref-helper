@@ -34,7 +34,9 @@ class StubBibtexManager:
         else:
             self.data.entries[key] = Entry(entry_type, fields)
 
-
+    def delete_reference(self, key):
+        if key in self.data.entries:
+            del self.data.entries[key]
 
 def create_data():
     """
