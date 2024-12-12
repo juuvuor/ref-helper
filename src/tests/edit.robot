@@ -1,10 +1,12 @@
 *** Settings ***
-Resource    resource.robot
+Resource        resource.robot
+
+Test Setup      Populate Data
+
 
 *** Test Cases ***
 Test Input edit
-    Populate Data
-    Input    edit edittausta    
+    Input    edit edittausta
     Input field_1    book
     Input field    sivu    30
     Input    ${EMPTY}
@@ -12,8 +14,7 @@ Test Input edit
     Run Application
     Output Should Contain    Päivitetty lähde edittausta, book, {'sivu': '30'}.
 
-Editing needs actual ID to edit
-    Populate Data
+Test Editing needs actual ID to edit
     Input    edit 23
     Input field_1    book
     Input field    sivu    30
@@ -21,3 +22,22 @@ Editing needs actual ID to edit
     Input    exit
     Run Application
     Output Should Contain    Lähdeavainta "23" ei löydetty!
+
+Test Edit With Invalid Field
+    Input    edit edittaust
+    Input field_1    book
+    Input field    sivu    30
+    Input field    ${EMPTY}    ${EMPTY}
+    Input    ${EMPTY}
+    Input    exit
+    Run Application
+    Output Should Contain    Lähdeavainta "edittaust" ei löydetty!
+
+Test Edit With Empty ID
+    Input    edit
+    Input field_1    book
+    Input field    sivu    30
+    Input    ${EMPTY}
+    Input    exit
+    Run Application
+    Output Should Contain    error: the following arguments are required: key_to_edit
