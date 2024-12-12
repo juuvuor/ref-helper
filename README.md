@@ -4,8 +4,11 @@ Lähdeviitteiden hallintaohjelma, joka helpottaa kandidaatintutkielman kirjoitta
 ## [Product backlog](https://jyu-my.sharepoint.com/:x:/g/personal/osterava_jyu_fi/EWZjQ7GUXjBGiN0exdQ4L6EBh-DBpoIOX4FvMfPpZma3jQ?e=Xhj8SP)
 
 ## Testikattavuus ja testit
-[![codecov](https://codecov.io/gh/juuvuor/ref-helper/graph/badge.svg?token=WBO5CK9QZS)](https://codecov.io/gh/juuvuor/ref-helper)
+
 ![GHA workflow badge](https://github.com/juuvuor/ref-helper/workflows/Python_application/badge.svg)
+[![codecov](https://codecov.io/gh/juuvuor/ref-helper/graph/badge.svg?token=WBO5CK9QZS)](https://codecov.io/gh/juuvuor/ref-helper)
+
+![Codecov](https://codecov.io/gh/juuvuor/ref-helper/graphs/sunburst.svg?token=WBO5CK9QZS)
 
 ## Asentaminen ja ajaminen
 ```bash
