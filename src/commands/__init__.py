@@ -1,6 +1,7 @@
 import commands.list as c_list
 import commands.add_reference as c_add_reference
 import commands.edit_reference as c_edit_reference
+import commands.delete_reference as c_delete_reference
 
 
 """
@@ -23,7 +24,8 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
 command_modules = [
     c_list,
     c_add_reference,
-    c_edit_reference
+    c_edit_reference,
+    c_delete_reference
 ]
 
 

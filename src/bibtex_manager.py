@@ -49,6 +49,8 @@ class BibtexManager:
         """ Poistaa avainta vastaan lähdeviitteen.
         :param key: lähdeviitten id, voi olla numero tai merkkijono.
         """
+        if key not in self.data.entries:
+            raise KeyError(f'Lähdeavainta "{key}" ei löytynyt!')
         self.data.entries.pop(key)
         self.write()
 
