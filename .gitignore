@@ -2,8 +2,11 @@ __pycache__
 .pytest_cache
 *tmp
 .coverage
+coverage.xml
 htmlcov
 report.html
 log.html
 output.xml
 test.bib
+
+poetry.lock
