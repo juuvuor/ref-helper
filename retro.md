@@ -1,6 +1,6 @@
 # Retro 2 #
 
-## Mitä menestyi hyvin? ##
+## Mikä meni hyvin? ##
 **Tehokkuus:** Kaikki työtehtävät saatiin suoritettua suunnitellusti.
 **Yhteistyö:** Jokainen tiimin jäsen osallistui aktiivisesti työskentelyyn.
 **Viestintä:** Viestintä tiimin sisällä parani merkittävästi ensimmäiseen sprinttiin verrattuna.
