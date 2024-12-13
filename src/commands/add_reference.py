@@ -1,6 +1,7 @@
 #import sys, pdb # debug
 import argparse
 import requests
+from pybtex.database import parse_string as bibtex_from_string
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 
@@ -15,15 +16,26 @@ def add_to_subparsers(parser, subparsers):
         add_help=False,
         help="add a reference"
     )
-    # TODO: Lisää argumentti --doi
-    parser_add.add_argument("--doi", nargs=1, help="Uses dx.doi.org to resolve the URL")
-    parser_add.add_argument("--url", nargs=1, help="HTTP(S) requests the URL with header {accept: application/x-bibtex}")
+    parser_add.add_argument("--doi", nargs=1, metavar="<doi>", help="Uses dx.doi.org to resolve the URL")
+    parser_add.add_argument("--url", nargs=1, metavar="<url>", help="HTTP(S) requests the URL with header {accept: application/x-bibtex}")
 
 
 def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
-    """ Suorittaa komennon """
+    """
+    Suorittaa komennon
+    Esimerkki doi komento: add --doi 10.1145/2380552.2380613
+
+    # Palvelin ei näköjää palautakkaan bibtex-muotoista vastausta..
+    # Kai se vaan riippuu palvelimesta idk
+    Esimerkki url komento: add --url https://dl.acm.org/doi/10.1145/2380552.2380613
+    """
     if ns.doi or ns.url:
-        return resolve_reference_from_arguments(io, ns)
+        result = resolve_reference_from_arguments(ns)
+        # TODO: avainten muutoskyky käyttäjälle:
+        # käy läpi entry yksitellen ja tarjoa käyttäjälle
+        # kyky vaihtaa default avain joksikin toiseksi
+        data_manager.append_bibliography_data(result)
+        return
 
     (key, entry_type, fields) = prompt_for_reference(io)
     #pdb.Pdb(stdout=sys.__stdout__).set_trace() # debug
@@ -42,7 +54,7 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
         io.write(f'Lähdeavain "{key}" on jo olemassa!')
 
 
-def prompt_for_reference(io: ConsoleIO):
+def prompt_for_reference(io: ConsoleIO):# k
     """
     Kysyy käyttäjältä lähdeviitten tiedot ja lisää ne.
     """
@@ -58,27 +70,36 @@ def prompt_for_reference(io: ConsoleIO):
     return (key, entry_type, fields)
 
 
-def resolve_reference_from_arguments(io: ConsoleIO, ns: argparse.Namespace):
+def resolve_reference_from_arguments(ns: argparse.Namespace):
+    """ Resolvettaa bibtex-referenssin doi tai url:n perusteella. """
     print("DEBUG: " + str(ns))
     if ns.doi and ns.url:
-        return io.write("Defined both --doi and --url, define only one.")
+        raise Exception("Defined both --doi and --url, define only one.")
     if ns.doi:
-        pass
+        url = doi_to_url(ns.doi[0])
     elif ns.url:
-        pass
+        url = ns.url[0]
     else:
         raise Exception("Tried to resolve from arguments without doi or url.")
 
+    result = http_get_url(url)
+    if result[0] != "application/x-bibtex":
+        raise Exception("Requested application/x-bibtex but server delivered " + str(result[0]))
+    return bibtex_from_string(result[1], "bibtex")
 
-def get_doi(doi: str, mime_type = "application/x-bibtex"):
+
+def doi_to_url(doi: str):
+    """ Muuntaa DOI:n URL-muotoon. """
+    return "http://dx.doi.org/" + doi
+
+
+def http_get_url(url: str, mime_type = "application/x-bibtex"):
     """
-    Hakee DOI:ta vastaavan dokumentin halutussa formaatissa.
+    Hakee URL:ta vastaavan dokumentin halutussa formaatissa.
     :param mime_type: defaultisti bibtexin mime type, jolloin sitä tukevat palvelimet palauttaa bibtex-muotoisen vastauksen.
     :returns: Muotoa: (MIME_TYPE, CONTENT) Palvelimesta riippuen palautettava merkkijono voi olla halutussa muodossa tai ei.
-    Esim "10.1000/182" tulee text/html muodossa ja 10.1145/2380552.2380613 tulee application/x-bibtex muodossa jos niin halutaan.
+    Esim "http://dx.doi.org/10.1000/182" tulee text/html muodossa ja "http://dx.doi.org/10.1145/2380552.2380613" tulee application/x-bibtex muodossa jos niin halutaan.
     """
-    url =  "http://dx.doi.org/" + doi
     headers = {"accept": mime_type}
     r = requests.get(url, headers=headers, timeout=5000)
     return (r.headers.get("content-type"), r.text)
-

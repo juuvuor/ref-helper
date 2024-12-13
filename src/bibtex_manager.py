@@ -34,6 +34,14 @@ class BibtexManager:
         self.data.add_entry(key, entry)
         self.write()
 
+    def append_bibliography_data(self, data: BibliographyData):
+        """ Lisää BibliographyData-objektin tiedot referensseihin. """
+        print("DEBUG: add_bibliography_data " + str(data))
+        for entry_key in data.entries:
+            entry = data.entries[entry_key]
+            self.data.add_entry(entry_key, entry)
+        #self.write() # NOTE: disabloitu testisyistä
+
     def update_reference(self, key, entry_type, fields):
         """ Päivittää lähdeviitteen uusilla tiedoilla. 
         :param key: lähdeviitten id, voi olla numero tai merkkijono.
