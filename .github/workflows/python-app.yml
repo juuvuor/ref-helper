@@ -26,6 +26,8 @@ jobs:
       run: poetry run coverage run --branch -m pytest -W ignore::DeprecationWarning
     - name: Run tests and create coverage report with robot
       run: poetry run coverage run -m robot src/tests
+    - name: Coverage report
+      run: poetry run coverage xml
     - name: Run Pylint
       run: poetry run pylint src/
     - name: Upload coverage reports to Codecov
