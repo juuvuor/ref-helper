@@ -23,9 +23,10 @@ class Interpreter:
     että argparse jossain edge-tapauksessa printtaa stdout tai stderr..
     bug reporttia, niin korjataan.
     """
-    def __init__(self, io, data_manager):
+    def __init__(self, io, data_manager, http):
         self.io = io
         self.data_manager = data_manager
+        self.http = http
         self.parser = CustomArgumentParser(prog="", add_help=False)
         self.subparsers = self.parser.add_subparsers(metavar="<command>", dest="command_name")
         self.commands = commands.init_commands(self.parser, self.subparsers)
@@ -67,7 +68,7 @@ class Interpreter:
             self.parser.print_help(self.io)
         else:
             if isinstance(parsed, argparse.Namespace):
-                return command(self.io, self.data_manager, parsed)
+                return command(self.io, self.data_manager, self.http, parsed)
 
             self.io.write(command_name + ": error: " + LATEST_ERROR_MESSAGE)
             self.subparsers.choices.get(command_name).print_help(self.io)

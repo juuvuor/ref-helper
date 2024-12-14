@@ -2,6 +2,8 @@ import argparse
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
+
+
 aliases = ["delete", "d"]
 
 def add_to_subparsers(parser, subparsers):
@@ -13,7 +15,7 @@ def add_to_subparsers(parser, subparsers):
     )
     delete_parser.add_argument('delete_key', help="The key of the reference to delete")
 
-def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
+def execute(io: ConsoleIO, data_manager: BibtexManager, http, args: argparse.Namespace):
     """ Suorittaa koomennon """
     delete_key = args.delete_key
     confirmation = io.read(f"Poistetaanko lähde {delete_key}? (k/e)")

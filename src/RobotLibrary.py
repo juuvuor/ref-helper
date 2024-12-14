@@ -4,6 +4,7 @@ Toteuttaa robotti testin tarvitsemia avainsanoja
 from interpreter import Interpreter
 from stub_bibtex_manager import StubBibtexManager
 from stub_io import StubIO
+import stub_http_util
 
 
 class RobotLibrary:
@@ -14,7 +15,8 @@ class RobotLibrary:
         self.test = "testi"
         self.io = StubIO()
         self.data_manager = StubBibtexManager()
-        self.interpreter = Interpreter(self.io, self.data_manager)
+        self.http = stub_http_util
+        self.interpreter = Interpreter(self.io, self.data_manager, self.http)
 
     def run_application(self):
         """ Käynnistää tulkin """

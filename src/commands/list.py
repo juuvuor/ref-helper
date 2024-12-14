@@ -24,7 +24,7 @@ def add_to_subparsers(parser, subparsers):
                             metavar="<field_name> [numeric] [desc]",
                             help="""<field_name> with two optional modifiers [numeric] [desc] (to make the order descending) like 'year numeric desc' to sort by year treated as a number in descending order or "title" to sort by title in ascending order""")
 
-def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
+def execute(io: ConsoleIO, data_manager: BibtexManager, http, ns: argparse.Namespace):
     """
     Listaa referenssit.
 

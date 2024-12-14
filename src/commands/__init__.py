@@ -1,10 +1,6 @@
-import commands.list as c_list
-import commands.add_reference as c_add_reference
-import commands.edit_reference as c_edit_reference
-import commands.delete_reference as c_delete_reference
-
-
 """
+commands
+
 Komento-tiedoston tynkäesimerkki:
 
 aliases = ["esim"]
@@ -18,14 +14,18 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     pass
     return # Joko ei mitään tai "exit", jolloin interpreter breikkaa while loopista ja ohjelma sulkeutuu.
 """
+import commands.list as c_list
+import commands.add_reference as c_add_reference
+import commands.edit_reference as c_edit_reference
+import commands.delete_reference as c_delete_reference
 
 
 # NOTE: Tänne lisätään komennot, mitkä sitten alustetaan funktiolla init_commands.
 command_modules = [
-    c_list,
     c_add_reference,
     c_edit_reference,
-    c_delete_reference
+    c_delete_reference,
+    c_list
 ]
 
 
@@ -59,7 +59,7 @@ def init_default_commands(commands, parser, subparsers):
     parser_help.add_argument("command", nargs="*", default=[], action="extend")
 
     # Määritellään custom help-komento
-    def help_command(io, data_manager, ns):
+    def help_command(io, data_manager, http, ns):
         if len(ns.command) == 0:
             parser.print_help(io)
         else:
@@ -76,4 +76,4 @@ def init_default_commands(commands, parser, subparsers):
     parser_exit = subparsers.add_parser("exit", aliases=["exit", "q"], add_help=False, help="")
     parser_exit.add_argument("command", nargs="*", default=[], action="extend")
     for alias in ["exit", "q"]:
-        commands.update({alias: lambda io, data_manager, ns : "exit"})
+        commands.update({alias: lambda io, data_manager, http, ns : "exit"})
