@@ -4,6 +4,7 @@ from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 from pybtex.database import OrderedCaseInsensitiveDict, Entry
 
+
 aliases = ["edit", "e"]
 
 def add_to_subparsers(parser, subparsers):
@@ -15,7 +16,7 @@ def add_to_subparsers(parser, subparsers):
     )
     parser_edit.add_argument("key_to_edit", help="The key of the reference to edit")
 
-def execute(io: ConsoleIO, data_manager: BibtexManager, args: argparse.Namespace):
+def execute(io: ConsoleIO, data_manager: BibtexManager, http, args: argparse.Namespace):
     """
     Tarkistaa onko syötettyä keytä olemassa datassa ja editoi sitä jos on.
     """

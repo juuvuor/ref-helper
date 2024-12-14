@@ -2,6 +2,7 @@ import unittest
 from commands.list import execute
 from stub_io import StubIO
 from stub_bibtex_manager import StubBibtexManager
+import stub_http_util
 
 
 class TestListCommand(unittest.TestCase):
@@ -14,7 +15,7 @@ class TestListCommand(unittest.TestCase):
         # NOTE: EI TOIMI TÄLLÄ HETKELLÄ OIKEIN!
         return
         entry_type = "book"
-        execute(self.io, self.data_manager, ["list", "filter", entry_type])
+        execute(self.io, self.data_manager, stub_http_util, ["list", "filter", entry_type])
         total = "".join(self.io.outputs)
         entries = self.data_manager.get_data().entries
         for key in entries:

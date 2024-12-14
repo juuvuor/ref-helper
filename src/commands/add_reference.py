@@ -1,9 +1,9 @@
 #import sys, pdb # debug
 import argparse
-import requests
-from pybtex.database import parse_string as bibtex_from_string
+from pybtex.database import parse_string as bibtex_from_string, PybtexError
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
+import http_util
 
 
 aliases = ["add", "a"]
@@ -20,7 +20,7 @@ def add_to_subparsers(parser, subparsers):
     parser_add.add_argument("--url", nargs=1, metavar="<url>", help="HTTP(S) requests the URL with header {accept: application/x-bibtex}")
 
 
-def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
+def execute(io: ConsoleIO, data_manager: BibtexManager, http: http_util, ns: argparse.Namespace):
     """
     Suorittaa komennon
     Esimerkki doi komento: add --doi 10.1145/2380552.2380613
@@ -30,7 +30,8 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
     Esimerkki url komento: add --url https://dl.acm.org/doi/10.1145/2380552.2380613
     """
     if ns.doi or ns.url:
-        result = resolve_reference_from_arguments(ns)
+        result = resolve_reference_from_arguments(http, ns)
+        #print(result.to_string("bibtex"))
         # TODO: avainten muutoskyky käyttäjälle:
         # käy läpi entry yksitellen ja tarjoa käyttäjälle
         # kyky vaihtaa default avain joksikin toiseksi
@@ -50,11 +51,11 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, ns: argparse.Namespace):
 
         data_manager.add_reference(key, entry_type, fields)
         io.write(f"Lisätty lähde {key}, {entry_type}, {fields}.")
-    except Exception as e:
+    except PybtexError:
         io.write(f'Lähdeavain "{key}" on jo olemassa!')
 
 
-def prompt_for_reference(io: ConsoleIO):# k
+def prompt_for_reference(io: ConsoleIO):
     """
     Kysyy käyttäjältä lähdeviitten tiedot ja lisää ne.
     """
@@ -70,36 +71,24 @@ def prompt_for_reference(io: ConsoleIO):# k
     return (key, entry_type, fields)
 
 
-def resolve_reference_from_arguments(ns: argparse.Namespace):
+def resolve_reference_from_arguments(http: http_util, ns: argparse.Namespace):
     """ Resolvettaa bibtex-referenssin doi tai url:n perusteella. """
     print("DEBUG: " + str(ns))
     if ns.doi and ns.url:
-        raise Exception("Defined both --doi and --url, define only one.")
+        raise RuntimeError("Defined both --doi and --url, define only one.")
     if ns.doi:
         url = doi_to_url(ns.doi[0])
     elif ns.url:
         url = ns.url[0]
     else:
-        raise Exception("Tried to resolve from arguments without doi or url.")
+        raise RuntimeError("Tried to resolve from arguments without doi or url.")
 
-    result = http_get_url(url)
+    result = http.http_get_url(url, "application/x-bibtex")
     if result[0] != "application/x-bibtex":
-        raise Exception("Requested application/x-bibtex but server delivered " + str(result[0]))
+        raise RuntimeError("Requested application/x-bibtex but server delivered " + str(result[0]))
     return bibtex_from_string(result[1], "bibtex")
 
 
 def doi_to_url(doi: str):
     """ Muuntaa DOI:n URL-muotoon. """
     return "http://dx.doi.org/" + doi
-
-
-def http_get_url(url: str, mime_type = "application/x-bibtex"):
-    """
-    Hakee URL:ta vastaavan dokumentin halutussa formaatissa.
-    :param mime_type: defaultisti bibtexin mime type, jolloin sitä tukevat palvelimet palauttaa bibtex-muotoisen vastauksen.
-    :returns: Muotoa: (MIME_TYPE, CONTENT) Palvelimesta riippuen palautettava merkkijono voi olla halutussa muodossa tai ei.
-    Esim "http://dx.doi.org/10.1000/182" tulee text/html muodossa ja "http://dx.doi.org/10.1145/2380552.2380613" tulee application/x-bibtex muodossa jos niin halutaan.
-    """
-    headers = {"accept": mime_type}
-    r = requests.get(url, headers=headers, timeout=5000)
-    return (r.headers.get("content-type"), r.text)
