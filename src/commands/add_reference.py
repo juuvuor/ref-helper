@@ -1,6 +1,6 @@
 #import sys, pdb # debug
 import argparse
-from pybtex.database import parse_string as bibtex_from_string, PybtexError
+from pybtex.database import parse_string as bibtex_from_string, PybtexError, BibliographyData
 from console_io import ConsoleIO
 from bibtex_manager import BibtexManager
 import http_util
@@ -30,11 +30,9 @@ def execute(io: ConsoleIO, data_manager: BibtexManager, http: http_util, ns: arg
     Esimerkki url komento: add --url https://dl.acm.org/doi/10.1145/2380552.2380613
     """
     if ns.doi or ns.url:
-        result = resolve_reference_from_arguments(http, ns)
+        result = resolve_references_from_arguments(http, ns)
         #print(result.to_string("bibtex"))
-        # TODO: avainten muutoskyky käyttäjälle:
-        # käy läpi entry yksitellen ja tarjoa käyttäjälle
-        # kyky vaihtaa default avain joksikin toiseksi
+        result = prompt_edit_reference_keys(io, data_manager, result)
         data_manager.append_bibliography_data(result)
         return
 
@@ -71,7 +69,35 @@ def prompt_for_reference(io: ConsoleIO):
     return (key, entry_type, fields)
 
 
-def resolve_reference_from_arguments(http: http_util, ns: argparse.Namespace):
+def prompt_edit_reference_keys(io: ConsoleIO, data_manager: BibtexManager, data: BibliographyData):
+    """
+    Käy läpi entryt yksitellen ja tarjoaa käyttäjälle
+    kyvyn vaihtaa default avain joksikin toiseksi.
+    """
+    result = BibliographyData()
+    io.write(f"Löydetty {len(data.entries)} lähdeviitettä: (tyhjä vastaus = ei muutosta)")
+    for entry_key in data.entries:
+        entry = data.entries[entry_key]
+        exists = data_manager.key_exists(entry_key)
+        new_entry_key = ""
+        while True:
+            new_entry_key = io.read(f'Muutetaanko lähdeviitettä "{entry_key}"?{" (on jo olemassa)" if exists else ""} > ')
+            if not exists:
+                if new_entry_key == "":
+                    new_entry_key = entry_key
+                break
+            if new_entry_key == "":
+                io.write("Lähdeviitettä pakko muuttaa.")
+                continue
+            if data_manager.key_exists(new_entry_key):
+                io.write(f'Avain "{new_entry_key}" on jo olemassa!')
+                continue
+            break
+        result.add_entry(new_entry_key, entry)
+    return result
+
+
+def resolve_references_from_arguments(http: http_util, ns: argparse.Namespace):
     """ Resolvettaa bibtex-referenssin doi tai url:n perusteella. """
     print("DEBUG: " + str(ns))
     if ns.doi and ns.url:
