@@ -18,6 +18,7 @@ def add_to_subparsers(parser, subparsers):
 def execute(io: ConsoleIO, data_manager: BibtexManager, http, args: argparse.Namespace):
     """ Suorittaa koomennon """
     delete_key = args.delete_key
+    print("moi" + str(args))
     confirmation = io.read(f"Poistetaanko lähde {delete_key}? (k/e)")
     if confirmation.lower() == 'k':
         try:
