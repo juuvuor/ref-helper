@@ -16,14 +16,14 @@ class BibtexManager:
         self.file_path = file_path
         # Data muotoa: BibliographyData
         # https://docs.pybtex.org/api/parsing.html#pybtex.database.BibliographyData
-        self.data = Parser().parse_file(file_path) if isfile(file_path) else BibliographyData()
+        self.data = Parser(encoding="utf-8").parse_file(file_path) if isfile(file_path) else BibliographyData()
 
     def get_data(self):
         """
         Palauttaa suoraan sisäisesti käytetyn datan, johon ulkoisesti tehdään muutoksia.
         """
         return self.data
-    
+
     def key_exists(self, key: str):
         """ Tarkistaa onko avain varattu. """
         return key in self.data.entries
@@ -44,7 +44,7 @@ class BibtexManager:
         for entry_key in data.entries:
             entry = data.entries[entry_key]
             self.data.add_entry(entry_key, entry)
-        #self.write() # NOTE: disabloitu testisyistä
+        self.write()
 
     def update_reference(self, key, entry_type, fields):
         """ Päivittää lähdeviitteen uusilla tiedoilla. 
@@ -71,5 +71,5 @@ class BibtexManager:
         Kirjoittaa bib tiedostoon.
         TODO: backup
         """
-        with open(self.file_path, "w") as bibfile:
+        with open(self.file_path, "w", encoding="utf-8") as bibfile:
             self.data.to_file(bibfile)
