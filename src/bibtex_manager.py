@@ -23,6 +23,10 @@ class BibtexManager:
         Palauttaa suoraan sisäisesti käytetyn datan, johon ulkoisesti tehdään muutoksia.
         """
         return self.data
+    
+    def key_exists(self, key: str):
+        """ Tarkistaa onko avain varattu. """
+        return key in self.data.entries
 
     def add_reference(self, key, entry_type, fields):
         """ Lisää uuden lähdeviitteen. 
