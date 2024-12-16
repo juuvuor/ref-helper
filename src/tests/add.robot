@@ -75,3 +75,13 @@ Test Fetch Bibtex Reference with Valid URL
 
 Test Fetch Bibtex Reference with Invalid URL
     Run Keyword And Expect Error    No mapping found for URL    Http Get Url    http://invalid.url/10.1145/2380552.2380613    application/x-bibtex
+
+Test Fetch Bibtex Reference with Valid DOI
+    ${doi_url}=    Doi To Url    10.1145/2380552.2380613
+    ${result}=    Http Get Url    ${doi_url}    application/x-bibtex
+    ${mime_type}    ${bibtex}=    Set Variable    ${result}
+    Should Contain    ${bibtex}    @inproceedings{Luukkainen_2012
+
+Test Fetch Bibtex Reference with Invalid DOI
+    ${invalid_doi_url}=    Doi To Url    invalid_doi
+    Run Keyword And Expect Error    No mapping found for URL   Http Get Url    ${invalid_doi_url}    application/x-bibtex

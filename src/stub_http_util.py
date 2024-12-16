@@ -33,3 +33,12 @@ def http_get_url(url: str, mime_type="text/html", timeout=5000):
     if result is None:
         raise RuntimeError(f"No mapping found for URL")
     return "application/x-bibtex", result
+
+@keyword("Doi To Url")
+def doi_to_url(doi: str):
+    """
+    Muuntaa DOI:n URL-muotoon.
+    :param doi: DOI-tunnus
+    :returns: Muunnettu DOI-URL
+    """
+    return "http://dx.doi.org/" + doi
