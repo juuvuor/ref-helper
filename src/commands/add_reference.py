@@ -94,6 +94,7 @@ def prompt_edit_reference_keys(io: ConsoleIO, data_manager: BibtexManager, data:
                 continue
             break
         result.add_entry(new_entry_key, entry)
+        print("Uusi lähde lisätty: " + new_entry_key)
     return result
 
 

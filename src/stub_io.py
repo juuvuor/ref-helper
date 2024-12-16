@@ -14,6 +14,7 @@ class StubIO:
             return self.inputs.pop(0)
         else:
             return ""
+
     def add_input(self, value):
         """ Lisää inputtiin """
         self.inputs.append(value)

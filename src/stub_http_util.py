@@ -2,6 +2,7 @@
 Toteuttaa testausta varten http_util tyngän
 """
 
+from robot.api.deco import keyword
 
 mappings = {
     "http://dx.doi.org/10.1145/2380552.2380613|application/x-bibtex": """
@@ -21,11 +22,23 @@ mappings = {
 """
 }
 
-
-def http_get_url(url: str, mime_type = "text/html", timeout = 5000):
+@keyword("Http Get Url")
+def http_get_url(url: str, mime_type="text/html", timeout=5000):
     """
     Hakee URL:ta ja mime_typeä vastaavan dokumentin halutussa formaatissa.
     :param mime_type: defaultisti text/html
     :returns: Muotoa: (MIME_TYPE, CONTENT)
     """
-    return mappings.get(url + "|" + mime_type)
+    result = mappings.get(url + "|" + mime_type)
+    if result is None:
+        raise RuntimeError(f"No mapping found for URL")
+    return "application/x-bibtex", result
+
+@keyword("Doi To Url")
+def doi_to_url(doi: str):
+    """
+    Muuntaa DOI:n URL-muotoon.
+    :param doi: DOI-tunnus
+    :returns: Muunnettu DOI-URL
+    """
+    return "http://dx.doi.org/" + doi
