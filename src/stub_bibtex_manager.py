@@ -35,6 +35,7 @@ class StubBibtexManager:
             self.data.entries[key] = Entry(entry_type, fields)
 
     def delete_reference(self, key):
+        """ Poistaa olemassa olevan lähteen"""
         if key in self.data.entries:
             del self.data.entries[key]
 

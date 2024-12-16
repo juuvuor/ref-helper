@@ -1,6 +1,6 @@
 *** Settings ***
 Resource    resource.robot
-
+Library    ../stub_http_util.py
 
 *** Test Cases ***
 Test Input Add One
@@ -67,3 +67,11 @@ Test Input Add Empty Field
     Input    exit
     Run Application
     Output Should Contain    Lisätty lähde id, type, {}.
+
+Test Fetch Bibtex Reference with Valid URL
+    ${result}=    Http Get Url    http://dx.doi.org/10.1145/2380552.2380613    application/x-bibtex
+    ${mime_type}    ${bibtex}=    Set Variable    ${result}
+    Should Contain    ${bibtex}    @inproceedings{Luukkainen_2012
+
+Test Fetch Bibtex Reference with Invalid URL
+    Run Keyword And Expect Error    No mapping found for URL    Http Get Url    http://invalid.url/10.1145/2380552.2380613    application/x-bibtex
