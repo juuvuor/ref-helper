@@ -18,8 +18,3 @@ class StubIO:
     def add_input(self, value):
         """ Lisää inputtiin """
         self.inputs.append(value)
-
-    def add_input2(self,value1,value2):
-        """ Lisää inputtiin kaksi komentoa """
-        self.inputs.append(value1)
-        self.inputs.append(value2)
