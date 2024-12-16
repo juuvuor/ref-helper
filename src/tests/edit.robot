@@ -8,7 +8,7 @@ Test Setup      Populate Data
 Test Input edit
     Input    edit edittausta
     Input field_1    book
-    Input field    sivu    30
+    Input field_1    30
     Input    ${EMPTY}
     Input    exit
     Run Application
