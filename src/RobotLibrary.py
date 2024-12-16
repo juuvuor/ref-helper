@@ -30,10 +30,6 @@ class RobotLibrary:
         """ Lisää inputtiin komennon """
         self.io.add_input(value)
 
-    def input_edit(self,value1,value2):
-        """ Lisää inputtiin komennot """
-        self.io.add_input2(value1,value2)
-
     def instance_should_contain(self, value):
         """ Tyhmä ensimmäinen testi jotta näkee että testit toimivat """
         testi = self.test
