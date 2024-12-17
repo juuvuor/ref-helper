@@ -11,7 +11,7 @@ import http_util
 signal.signal(signal.SIGINT, lambda sig, frame : exit(0))
 
 # TODO: Keksi parempi tiedostonimi
-BIBTEX_FILE_PATH = "./test.bib"
+BIBTEX_FILE_PATH = "./references.bib"
 data_manager = BibtexManager(BIBTEX_FILE_PATH)
 console_io = ConsoleIO()
 http = http_util

@@ -7,5 +7,5 @@ htmlcov
 report.html
 log.html
 output.xml
-test.bib
+references.bib
 poetry.lock
