@@ -33,3 +33,5 @@ Koodi on laadukasta ja hyvin dokumentoitu:
 * Koodi noudattaa projektin ohjelmointikäytäntöjä ja -standardeja.
 * Koodi on selkeää, hyvin kommentoitua ja helposti ylläpidettävää.
 
+### [linkki loppuraporttiin](https://jyu-my.sharepoint.com/:w:/g/personal/juvavuor_jyu_fi/EWll-d8q5QZEgtyGSCbVgKoB9sZ0gcwXwkf9Y8YV0-n2Aw?e=kIrTrm)
+
